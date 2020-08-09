@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity_Login"
+    android:background="@color/backColor">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-52dp"
+        tools:layout_editor_absoluteY="175dp">
+
+        <TextView
+            android:id="@+id/Login_LBL_Head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:fontFamily="@font/indigo_daisy"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="100dp"
+            android:text="Login App"
+            android:textSize="45sp" />
+
+        <ImageView
+            android:id="@+id/Login_IMG_appLogo"
+            android:layout_width="109dp"
+            android:layout_height="141dp"
+            android:layout_below="@+id/Login_LBL_Head"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="-88dp"
+            android:layout_marginEnd="45dp"
+            android:layout_marginRight="45dp"
+            android:src="@drawable/img_mainlogo_jpg" />
+
+        <EditText
+            android:id="@+id/Login_EDT_enterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Login_IMG_appLogo"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Enter Name"
+            android:padding="10dp"
+            android:textColorHighlight="#ff7eff15"
+            android:textColorHint="#758487" />
+
+        <EditText
+            android:id="@+id/Login_EDT_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Login_EDT_enterName"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColorHint="#758487" />
+
+        <Button
+            android:id="@+id/Login_BTN_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Login_EDT_password"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/rounded_greeencolor"
+            android:text="login" />
+
+        <TextView
+            android:id="@+id/Login_LBL_Question"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Login_BTN_login"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="100dp"
+            android:text="Did you sign up?"
+            android:textSize="20dp"
+            android:layout_marginStart="10dp" />
+
+        <Button
+            android:id="@+id/Login_BTN_register"
+            android:layout_width="164dp"
+            android:layout_height="53dp"
+            android:layout_alignTop="@+id/Login_LBL_Question"
+            android:layout_alignBottom="@+id/Login_LBL_Question"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="-15dp"
+            android:layout_marginEnd="27dp"
+            android:layout_marginRight="27dp"
+            android:layout_marginBottom="-11dp"
+            android:background="@drawable/rounded_greeencolor"
+            android:text="@string/register"
+            android:textSize="20dp" />
+
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
