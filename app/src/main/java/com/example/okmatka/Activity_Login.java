@@ -1,17 +1,19 @@
 package com.example.okmatka;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 
 public class Activity_Login extends AppCompatActivity {
 
-    private Button Login_BTN_login,Login_BTN_register;
+    private Button Login_BTN_login, Login_BTN_register;
     private EditText Login_EDT_password, Login_EDT_enterName;
 
     @Override
@@ -36,7 +38,9 @@ public class Activity_Login extends AppCompatActivity {
         Login_BTN_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setContentView(R.layout.activity_register);
+                Intent loginIntent = new Intent(Activity_Login.this, Activity_Register.class);
+                startActivity(loginIntent);
+                finish();
             }
         });
     }
@@ -48,3 +52,5 @@ public class Activity_Login extends AppCompatActivity {
         Login_BTN_register = findViewById(R.id.Login_BTN_register);
     }
 }
+
+//TODO fix the onClick method!!

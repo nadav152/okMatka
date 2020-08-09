@@ -72,3 +72,4 @@ public class Activity_Register extends AppCompatActivity {
         register_EDT_enterName = findViewById(R.id.register_EDT_enterName);
     }
 }
+
