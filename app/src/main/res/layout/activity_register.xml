@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,9 +18,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:fontFamily="@font/indigo_daisy"
+            android:layout_marginStart="30dp"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="100dp"
-            android:text="Register App"
+            android:text="@string/register_app"
             android:textSize="45sp" />
 
         <ImageView
@@ -35,7 +35,9 @@
             android:layout_marginTop="-88dp"
             android:layout_marginEnd="45dp"
             android:layout_marginRight="45dp"
-            android:src="@drawable/img_mainlogo_jpg" />
+            android:src="@drawable/img_mainlogo_jpg"
+            android:contentDescription="@string/this_will_be_the_app_logo"
+            android:layout_marginStart="100dp" />
 
         <EditText
             android:id="@+id/register_EDT_enterName"
@@ -46,11 +48,13 @@
             android:layout_marginTop="40dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
+            android:inputType="textPersonName"
             android:background="@drawable/rounded_edittext"
-            android:hint="Enter Name"
+            android:hint="@string/enter_name"
             android:padding="10dp"
             android:textColorHighlight="#ff7eff15"
-            android:textColorHint="#758487" />
+            android:textColorHint="#758487"
+            android:autofillHints="i think its your own name " />
 
         <EditText
             android:id="@+id/register_EDT_email"
@@ -62,10 +66,11 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edittext"
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:padding="10dp"
-            android:textColorHint="#758487" />
+            android:textColorHint="#758487"
+            android:autofillHints="you should know your mail" />
 
         <EditText
             android:id="@+id/register_EDT_password"
@@ -77,10 +82,11 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edittext"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="10dp"
-            android:textColorHint="#758487" />
+            android:textColorHint="#758487"
+            android:autofillHints="might be something personal" />
 
         <EditText
             android:id="@+id/register_EDT_Repassword"
@@ -92,10 +98,11 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edittext"
-            android:hint="Re-type Password"
+            android:hint="@string/re_type_password"
             android:inputType="textPassword"
             android:padding="10dp"
-            android:textColorHint="#758487" />
+            android:textColorHint="#758487"
+            android:autofillHints="might be something personal" />
 
         <Button
             android:id="@+id/register_BTN_register"
@@ -107,7 +114,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_greeencolor"
-            android:text="Register" />
+            android:text="@string/register" />
 
 
 

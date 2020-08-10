@@ -7,14 +7,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/AppTheme"
         android:supportsRtl="false"
-        >
-
-        <activity android:name=".MainActivity">
-
-        </activity>
-
+        android:theme="@style/AppTheme">
         <activity android:name=".Activity_Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".Activity_Register"
+            android:parentActivityName=".Activity_Login"/>
+
+
     </application>
 
 </manifest>

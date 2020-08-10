@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,35 +18,60 @@ public class Activity_Register extends AppCompatActivity {
             register_EDT_email, register_EDT_enterName;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(getApplicationContext(), "Something went Wrong", Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.activity_register);
         findView();
         register_BTN_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setContentView(R.layout.activity_login);
-                //checkRegister();
+//                Intent loginIntent = new Intent(Activity_Login.this, Activity_Register.class);
+//                startActivity(loginIntent);
+//                finish();
+                checkRegister();
             }
         });
     }
 
     private void checkRegister() {
-        if (register_EDT_enterName.length() > 0 &&
-                register_EDT_Repassword.equals(register_EDT_password)) {
-            if (isValidEmail(register_EDT_email.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "User has been registered!", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Toast.makeText(getApplicationContext(), "Something went Wrong", Toast.LENGTH_SHORT).show();
-                Log.d("pttt", "Something went Wrong");
-            }
-        }else{
-            Toast.makeText(getApplicationContext(), "Something went Wrong", Toast.LENGTH_SHORT).show();
-            Log.d("pttt", "Something went Wrong");
+        if (checkName() && checkEmail() && checkPassword()) {
+            Toast.makeText(getApplicationContext(), "User has been registered!", Toast.LENGTH_SHORT).show();
+            //saveUser();
+            //TODO add and function that saves the new user !
+        } else {
+            Toast.makeText(getApplicationContext(), "Please fix it", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean checkName() {
+        if (!(register_EDT_enterName.length() > 0)) {
+            Toast.makeText(getApplicationContext(), "Not a valid name", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkEmail() {
+        if (!(isValidEmail(register_EDT_email.getText().toString()))) {
+            Toast.makeText(getApplicationContext(), "Not a valid e-mail", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkPassword() {
+        String pass = String.valueOf(register_EDT_password.getText());
+        String rePass = String.valueOf(register_EDT_Repassword.getText());
+        if (pass.length() < 6) {
+            Toast.makeText(getApplicationContext(), "Password must be at least 6 digits", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (!(pass.equals(rePass))) {
+            Toast.makeText(getApplicationContext(), "Password is not equal", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private boolean isValidEmail(String email) {

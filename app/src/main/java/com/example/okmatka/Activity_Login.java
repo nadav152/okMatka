@@ -7,19 +7,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 
 
 public class Activity_Login extends AppCompatActivity {
 
-    private Button Login_BTN_login, Login_BTN_register;
+    private Button Login_BTN_login, Login_BTN_signup;
     private EditText Login_EDT_password, Login_EDT_enterName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity__login);
         findView();
 
         Login_BTN_login.setOnClickListener(new View.OnClickListener() {
@@ -35,7 +34,7 @@ public class Activity_Login extends AppCompatActivity {
             }
         });
 
-        Login_BTN_register.setOnClickListener(new View.OnClickListener() {
+        Login_BTN_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent loginIntent = new Intent(Activity_Login.this, Activity_Register.class);
@@ -49,8 +48,8 @@ public class Activity_Login extends AppCompatActivity {
         Login_BTN_login = findViewById(R.id.Login_BTN_login);
         Login_EDT_enterName = findViewById(R.id.Login_EDT_enterName);
         Login_EDT_password = findViewById(R.id.Login_EDT_password);
-        Login_BTN_register = findViewById(R.id.Login_BTN_register);
+        Login_BTN_signup = findViewById(R.id.Login_BTN_signup);
     }
 }
 
-//TODO fix the onClick method!!
+//TODO create a method that logs in to the user!!

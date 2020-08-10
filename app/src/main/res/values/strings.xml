@@ -2,7 +2,7 @@
     <string name="app_name">okMatka</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="email">Email Id</string>
+    <string name="email">Email</string>
     <string name="passowrd">Password</string>
     <string name="login">LOGIN</string>
     <string name="show_pwd">Show Password</string>
@@ -17,9 +17,13 @@
     <string name="terms_conditions">By clicking SignUp you agree all the Terms and Conditions.</string>
     <string name="signUp">SIGN UP</string>
     <string name="already_user">Already have Account? Login here.</string>
-    <string name="registered_emailid">Please enter your Registered Email Id below:</string>
-    <string name="submit">SUBMIT</string>
-    <string name="back">BACK</string>
     <string name="close" translatable="false">Close</string>
-    <string name="register">Register</string>
+    <string name="register">Register</string>"
+    <string name="password">Password</string>
+    <string name="re_type_password">Re-type Password</string>
+    <string name="register_app">register app</string>
+    <string name="this_will_be_the_app_logo">this will be the app logo</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="login_app">Login App</string>
+    <string name="did_you_sign_up">Did you sign up?</string>
 </resources>
