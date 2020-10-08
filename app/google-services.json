@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1060508789447",
+    "firebase_url": "https://matkaproject.firebaseio.com",
+    "project_id": "matkaproject",
+    "storage_bucket": "matkaproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060508789447:android:40f4314ec37616570cece2",
+        "android_client_info": {
+          "package_name": "com.example.okmatka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060508789447-8ubr4ltg27f5f8k4kpb74cdm0c7poadr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0cNfp8UMPiJvToOr7ehKwtE-_1hDTA7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060508789447-8ubr4ltg27f5f8k4kpb74cdm0c7poadr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

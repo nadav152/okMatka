@@ -1,125 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backColor"
+    android:background="@drawable/gradient_app_background"
     tools:context=".Activity_Register">
 
-    <RelativeLayout
+
+    <TextView
+        android:id="@+id/register_LBL_Head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="102dp"
+        android:text="@string/register_app"
+        android:textSize="25sp" />
+
+    <ImageView
+        android:id="@+id/register_IMG_appLogo"
+        android:layout_width="109dp"
+        android:layout_height="141dp"
+        android:layout_below="@+id/register_LBL_Head"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="-88dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginRight="45dp"
+        android:background="@drawable/circle_background"
+        android:contentDescription="@string/this_will_be_the_app_logo"
+        />
+
+    <LinearLayout
+        android:id="@+id/register_LAY_details"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="-52dp"
-        tools:layout_editor_absoluteY="175dp">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register_IMG_appLogo"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:padding="5dp">
 
-        <TextView
-            android:id="@+id/register_LBL_Head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:fontFamily="@font/indigo_daisy"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="100dp"
-            android:text="@string/register_app"
-            android:textSize="45sp" />
-
-        <ImageView
-            android:id="@+id/register_IMG_appLogo"
-            android:layout_width="109dp"
-            android:layout_height="141dp"
-            android:layout_below="@+id/register_LBL_Head"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="-88dp"
-            android:layout_marginEnd="45dp"
-            android:layout_marginRight="45dp"
-            android:background="@drawable/circle_background"
-            android:src="@drawable/img_mainlogo_jpg"
-            android:contentDescription="@string/this_will_be_the_app_logo"
-            android:layout_marginStart="100dp" />
-
-        <EditText
-            android:id="@+id/register_EDT_enterName"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_IMG_appLogo"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:inputType="textPersonName"
-            android:background="@drawable/rounded_edittext"
-            android:hint="@string/enter_name"
-            android:padding="10dp"
-            android:textColorHighlight="#ff7eff15"
-            android:textColorHint="#758487"
-            android:autofillHints="i think its your own name " />
+            android:layout_margin="10dp"
+            app:boxStrokeColor="@color/colorPrimaryDark">
 
-        <EditText
-            android:id="@+id/register_EDT_email"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_EDT_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/whiteColor"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_EDT_enterName"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edittext"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:padding="10dp"
-            android:textColorHint="#758487"
-            android:autofillHints="you should know your mail" />
+            android:layout_margin="10dp"
+            app:passwordToggleEnabled="true"
+            app:boxStrokeColor="@color/colorPrimaryDark">
 
-        <EditText
-            android:id="@+id/register_EDT_password"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_EDT_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/whiteColor"
+                android:hint="@string/passowrd"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_EDT_email"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edittext"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:padding="10dp"
-            android:textColorHint="#758487"
-            android:autofillHints="might be something personal" />
+            android:layout_margin="10dp"
+            app:passwordToggleEnabled="true"
+            app:boxStrokeColor="@color/colorPrimaryDark">
 
-        <EditText
-            android:id="@+id/register_EDT_Repassword"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_EDT_Repassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/whiteColor"
+                android:hint="@string/re_type_password"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_EDT_password"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edittext"
-            android:hint="@string/re_type_password"
-            android:inputType="textPassword"
-            android:padding="10dp"
-            android:textColorHint="#758487"
-            android:autofillHints="might be something personal" />
+            android:layout_margin="10dp"
+            app:boxStrokeColor="@color/colorPrimaryDark">
 
-        <Button
-            android:id="@+id/register_BTN_register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/register_EDT_Repassword"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_greeencolor"
-            android:text="@string/register" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_EDT_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/whiteColor"
+                android:hint="@string/first_name"
+                android:inputType="textPersonName" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/register_BTN_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register_LAY_details"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/register"
+        app:cornerRadius="7dp"/>
 
 
-
-
-    </RelativeLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

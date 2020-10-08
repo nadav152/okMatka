@@ -23,7 +23,17 @@
     <string name="re_type_password">Re-type Password</string>
     <string name="register_app">register app</string>
     <string name="this_will_be_the_app_logo">this will be the app logo</string>
-    <string name="enter_name">Enter Name</string>
+
     <string name="login_app">Login App</string>
     <string name="did_you_sign_up">Did you sign up?</string>
+    <string name="good_match">Good Match</string>
+    <string name="bad_match">Bad Match</string>
+    <string name="user_name">User Name</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="first_name">First Name</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="type_a_message">Type a Message</string>
+
+
 </resources>

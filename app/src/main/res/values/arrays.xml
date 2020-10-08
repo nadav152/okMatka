@@ -1,0 +1,12 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="Roll">
+        <item>Attack</item>
+        <item>Defense</item>
+    </string-array>
+
+    <string-array name="roll_values">
+        <item>Attack</item>
+        <item>Defense</item>
+    </string-array>
+</resources>
