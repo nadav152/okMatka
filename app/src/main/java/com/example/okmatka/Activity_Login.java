@@ -48,7 +48,7 @@ public class Activity_Login extends AppCompatActivity {
         //checking if a user is already logged in
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(firebaseUser!=null) {
-            Intent intent = new Intent(Activity_Login.this, Activity_Profiles.class);
+            Intent intent = new Intent(Activity_Login.this, Activity_Main.class);
             startActivity(intent);
             finish();
         }
@@ -99,7 +99,7 @@ public class Activity_Login extends AppCompatActivity {
 
 
     private void moveToActivityProfiles() {
-        Intent loginIntent = new Intent(Activity_Login.this, Activity_Profiles.class);
+        Intent loginIntent = new Intent(Activity_Login.this, Activity_Main.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(loginIntent);
         finish();

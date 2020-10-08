@@ -26,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Activity_Profiles extends AppCompatActivity {
+public class Activity_Main extends AppCompatActivity {
 
     private FirebaseUser firebaseUser;
     private DatabaseReference myRef;
@@ -37,7 +37,7 @@ public class Activity_Profiles extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profiles);
+        setContentView(R.layout.activity_main);
         findViews();
         setFireBase();
         readDate();
@@ -96,7 +96,7 @@ public class Activity_Profiles extends AppCompatActivity {
     }
 
     private void moveToLogin() {
-        Intent intent = new Intent(Activity_Profiles.this,Activity_Login.class);
+        Intent intent = new Intent(Activity_Main.this,Activity_Login.class);
         startActivity(intent);
         finish();
     }

@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".Activity_Profiles"
+            android:name=".Activity_Main"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light">
 

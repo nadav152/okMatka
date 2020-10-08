@@ -55,8 +55,6 @@ public class Activity_Messages extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
         messages_RCV_recyclerView.setLayoutManager(linearLayoutManager);
-
-
     }
 
     private void setButtonListeners() {
@@ -84,6 +82,41 @@ public class Activity_Messages extends AppCompatActivity {
 
         myRef.child("USERS_CHATS").push().setValue(hashMap);
 
+    }
+
+    private void setConversation() {
+        intent = getIntent();
+        userISpeakWithId = intent.getStringExtra(USER_ID);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert userISpeakWithId != null;
+        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("USERS_LIST").child(userISpeakWithId);
+        userReference.addValueEventListener(valueListener());
+    }
+
+    private ValueEventListener valueListener() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //setting the toolBar with user details first
+                User userISpeakWith = snapshot.getValue(User.class);
+                assert userISpeakWith != null;
+                messages_LBL_userName.setText(userISpeakWith.getName());
+
+                if (userISpeakWith.getImageURL().equalsIgnoreCase("default"))
+                    messages_IMG_userPic.setImageResource(R.mipmap.ic_launcher);
+                else
+                    glide(userISpeakWith.getImageURL(),messages_IMG_userPic);
+
+                //reading the latest messages from the user
+                readMessage(firebaseUser.getUid(),userISpeakWithId);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
     }
 
     private void readMessage(final String myId, final String userISpeakToId) {
@@ -117,37 +150,8 @@ public class Activity_Messages extends AppCompatActivity {
         };
     }
 
-    private void setConversation() {
-        intent = getIntent();
-        userISpeakWithId = intent.getStringExtra(USER_ID);
-
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert userISpeakWithId != null;
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("USERS_LIST").child(userISpeakWithId);
-        myRef.addValueEventListener(valueListener());
-    }
-
-    private ValueEventListener valueListener() {
-        return new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User userISpeakWith = snapshot.getValue(User.class);
-                assert userISpeakWith != null;
-                messages_LBL_userName.setText(userISpeakWith.getName());
-
-                if (userISpeakWith.getImageURL().equalsIgnoreCase("default"))
-                    messages_IMG_userPic.setImageResource(R.mipmap.ic_launcher);
-                else
-                    glide(userISpeakWith.getImageURL(),messages_IMG_userPic);
-
-                readMessage(firebaseUser.getUid(),userISpeakWithId);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
+    private void glide(String url, ImageView into) {
+        Glide.with(this).load(url).into(into);
     }
 
     private void findViews() {
@@ -158,7 +162,5 @@ public class Activity_Messages extends AppCompatActivity {
         messages_BTN_sendButton = findViewById(R.id.messages_BTN_sendButton);
     }
 
-    private void glide(String url, ImageView into) {
-        Glide.with(this).load(url).into(into);
-    }
+
 }
