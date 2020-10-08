@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.okmatka.Chat;
+import com.example.okmatka.ChatMessage;
 import com.example.okmatka.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,15 +19,14 @@ import java.util.ArrayList;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<Chat> chatList;
+    private ArrayList<ChatMessage> chatMessageList;
     public static final int LETF_MSG = 0;
     public static final int RIGHT_MSG = 1;
-
     private FirebaseUser firebaseUser;
 
-    public MessageAdapter(Context context, ArrayList<Chat> chatList) {
+    public MessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList) {
         this.context = context;
-        this.chatList = chatList;
+        this.chatMessageList = chatMessageList;
     }
 
     @NonNull
@@ -47,19 +46,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
-        Chat currentChat = chatList.get(position);
-        holder.userMessage.setText(currentChat.getMessage());
+        ChatMessage currentChatMessage = chatMessageList.get(position);
+        holder.userMessage.setText(currentChatMessage.getMessage());
     }
 
     @Override
     public int getItemCount() {
-        return chatList.size();
+        return chatMessageList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (chatList.get(position).getSender().equals(firebaseUser.getUid()))
+        if (chatMessageList.get(position).getSender().equals(firebaseUser.getUid()))
             return RIGHT_MSG;
         else
             return LETF_MSG;

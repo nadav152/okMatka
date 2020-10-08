@@ -34,7 +34,7 @@ public class Activity_Messages extends AppCompatActivity {
     private EditText messages_EDT_sendMessage;
     private ImageButton messages_BTN_sendButton;
     private MessageAdapter messageAdapter;
-    private ArrayList<Chat> chatsList;
+    private ArrayList<ChatMessage> chatsList;
     private FirebaseUser firebaseUser;
     private Intent intent;
     private String userISpeakWithId;
@@ -132,10 +132,10 @@ public class Activity_Messages extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 chatsList.clear();
                 for (DataSnapshot snap : snapshot.getChildren()){
-                    Chat currentChat = snap.getValue(Chat.class);
-                    if (currentChat.getReceiver().equals(myId) && currentChat.getSender().equals(userISpeakToId)||
-                            currentChat.getReceiver().equals(userISpeakToId) && currentChat.getSender().equals(myId)){
-                        chatsList.add(currentChat);
+                    ChatMessage currentChatMessage = snap.getValue(ChatMessage.class);
+                    if (currentChatMessage.getReceiver().equals(myId) && currentChatMessage.getSender().equals(userISpeakToId)||
+                            currentChatMessage.getReceiver().equals(userISpeakToId) && currentChatMessage.getSender().equals(myId)){
+                        chatsList.add(currentChatMessage);
                     }
                     messageAdapter = new MessageAdapter(Activity_Messages.this,chatsList);
                     messages_RCV_recyclerView.setAdapter(messageAdapter);
