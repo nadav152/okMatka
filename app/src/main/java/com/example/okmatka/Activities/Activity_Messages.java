@@ -40,7 +40,6 @@ public class Activity_Messages extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private ArrayList<ChatMessage> chatsList;
     private FirebaseUser firebaseUser;
-    private Intent intent;
     private String userISpeakWithId;
     private DatabaseReference myRef;
     public static final String USER_ID = "USER_ID";
@@ -94,7 +93,7 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void setConversation() {
-        intent = getIntent();
+        Intent intent = getIntent();
         userISpeakWithId = intent.getStringExtra(USER_ID);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -142,6 +141,7 @@ public class Activity_Messages extends AppCompatActivity {
                 chatsList.clear();
                 for (DataSnapshot snap : snapshot.getChildren()){
                     ChatMessage currentChatMessage = snap.getValue(ChatMessage.class);
+                    assert currentChatMessage != null;
                     if (currentChatMessage.getReceiver().equals(myId) && currentChatMessage.getSender().equals(userISpeakToId)||
                             currentChatMessage.getReceiver().equals(userISpeakToId) && currentChatMessage.getSender().equals(myId)){
                         chatsList.add(currentChatMessage);
@@ -158,7 +158,7 @@ public class Activity_Messages extends AppCompatActivity {
             }
         };
     }
-    
+
     private void findViews() {
         messages_IMG_userPic = findViewById(R.id.messages_IMG_userPic);
         messages_LBL_userName = findViewById(R.id.messages_LBL_userName);
