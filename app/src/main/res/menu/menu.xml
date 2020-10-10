@@ -4,6 +4,11 @@
 
     <item
         android:id="@+id/menu_ITM_logout"
-        android:title="Logout"
+        android:title="@string/logout"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_ITM_settings"
+        android:title="@string/settings"
         app:showAsAction="never"/>
 </menu>

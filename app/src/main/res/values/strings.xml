@@ -34,6 +34,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="type_a_message">Type a Message</string>
+    <string name="this_will_be_the_rate">this will be the rate</string>
+    <string name="this_will_be_the_name">this will be the name</string>
+    <string name="this_will_be_the_age">this will be the age</string>
+    <string name="this_will_be_roll">this will be roll</string>
+    <string name="this_will_be_experience">this will be experience</string>
+    <string name="this_will_be_favourite_beach">this will be favourite beach</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Settings</string>
 
 
 </resources>

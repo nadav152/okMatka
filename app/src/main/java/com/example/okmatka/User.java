@@ -8,7 +8,7 @@ public class User {
     private String password, name, lastName, roll, experience, favouriteBeach, email,imageURL;
     private int age, numberOfReviews;
     private double rate;
-    private String id = "";
+    private String id = "",status;
     private HashMap<String,User> likedPeopleList;
     private ArrayList<User> chatList;
 
@@ -30,6 +30,7 @@ public class User {
         this.rate = 0.0;
         this.id = "";
         this.imageURL = "default";
+        this.status = "";
         this.likedPeopleList = new HashMap<>();
         this.chatList = new ArrayList<>();
     }
@@ -128,6 +129,14 @@ public class User {
 
     public HashMap<String, User> getLikedPeopleList() {
         return likedPeopleList;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setLikedPeopleList(HashMap<String, User> likedPeopleList) {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_app_background"
-    tools:context=".Activity_Register">
+    tools:context=".Activities.Activity_Register">
 
 
     <TextView

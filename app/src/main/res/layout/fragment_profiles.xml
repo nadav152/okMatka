@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_app_background"
+    android:orientation="vertical"
+    tools:context=".Fragments.Profiles_Fragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3.5"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/profiles_IMG_character_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/img_messi"
+            android:padding="5dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/profiles_LBL_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:text="@string/this_will_be_the_name"
+            android:textSize="20sp"
+            android:layout_marginStart="20sp" />
+
+        <TextView
+            android:id="@+id/profiles_LBL_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/profiles_LBL_name"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="50dp"
+            android:padding="5dp"
+            android:text="@string/this_will_be_the_age"
+            android:textSize="20sp"
+            android:layout_marginStart="20sp" />
+
+        <TextView
+            android:id="@+id/profiles_LBL_roll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/profiles_LBL_age"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="50dp"
+            android:padding="5dp"
+            android:text="@string/this_will_be_roll"
+            android:textSize="20sp"
+            android:layout_marginStart="20sp" />
+
+        <TextView
+            android:id="@+id/profiles_LBL_experience"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/profiles_LBL_roll"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="50dp"
+            android:padding="5dp"
+            android:text="@string/this_will_be_experience"
+            android:textSize="20sp"
+            android:layout_marginStart="20sp" />
+
+        <TextView
+            android:id="@+id/profiles_LBL_favourite_beach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/profiles_LBL_experience"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="50dp"
+            android:padding="5dp"
+            android:text="@string/this_will_be_favourite_beach"
+            android:textSize="20sp"
+            android:layout_marginStart="20sp" />
+
+        <TextView
+            android:id="@+id/profiles_LBL_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/profiles_LBL_favourite_beach"
+            android:layout_marginLeft="20sp"
+            android:layout_marginTop="50dp"
+            android:padding="5dp"
+            android:text="@string/this_will_be_the_rate"
+            android:textSize="20sp"
+            android:layout_marginStart="20sp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profiles_BTN_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginLeft="50dp"
+            android:padding="10dp"
+
+            android:tag="red"
+            android:text="@string/bad_match"
+            android:textColor="@color/redColor"
+            android:textSize="15sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profiles_BTN_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="-10dp"
+            android:padding="10dp"
+            android:tag="green"
+            android:text="@string/good_match"
+            android:textColor="@color/greenieColor"
+            android:textSize="15sp" />
+    </RelativeLayout>
+</LinearLayout>

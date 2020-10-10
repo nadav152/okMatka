@@ -1,4 +1,4 @@
-package com.example.okmatka;
+package com.example.okmatka.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.okmatka.Adapters.MessageAdapter;
+import com.example.okmatka.ChatMessage;
+import com.example.okmatka.MySignal;
+import com.example.okmatka.R;
+import com.example.okmatka.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +42,7 @@ public class Activity_Messages extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private Intent intent;
     private String userISpeakWithId;
+    private DatabaseReference myRef;
     public static final String USER_ID = "USER_ID";
 
     @Override
@@ -45,9 +50,14 @@ public class Activity_Messages extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         findViews();
+        setFireBase();
         setConversation();
         setRecyclerView();
         setButtonListeners();
+    }
+
+    private void setFireBase() {
+        myRef = FirebaseDatabase.getInstance().getReference();
     }
 
     private void setRecyclerView() {
@@ -73,7 +83,6 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void sendMessage(String sender, String receiver, String message) {
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("sender",sender);
@@ -90,8 +99,8 @@ public class Activity_Messages extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert userISpeakWithId != null;
-        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("USERS_LIST").child(userISpeakWithId);
-        userReference.addValueEventListener(valueListener());
+        DatabaseReference userISpeakWithReference = myRef.child("USERS_LIST").child(userISpeakWithId);
+        userISpeakWithReference.addValueEventListener(valueListener());
     }
 
     private ValueEventListener valueListener() {
@@ -104,9 +113,9 @@ public class Activity_Messages extends AppCompatActivity {
                 messages_LBL_userName.setText(userISpeakWith.getName());
 
                 if (userISpeakWith.getImageURL().equalsIgnoreCase("default"))
-                    messages_IMG_userPic.setImageResource(R.mipmap.ic_launcher);
+                    Glide.with(getApplicationContext()).load(R.drawable.general_user).into(messages_IMG_userPic);
                 else
-                    glide(userISpeakWith.getImageURL(),messages_IMG_userPic);
+                    Glide.with(getApplicationContext()).load(userISpeakWith.getImageURL()).into(messages_IMG_userPic);
 
                 //reading the latest messages from the user
                 readMessage(firebaseUser.getUid(),userISpeakWithId);
@@ -149,11 +158,7 @@ public class Activity_Messages extends AppCompatActivity {
             }
         };
     }
-
-    private void glide(String url, ImageView into) {
-        Glide.with(this).load(url).into(into);
-    }
-
+    
     private void findViews() {
         messages_IMG_userPic = findViewById(R.id.messages_IMG_userPic);
         messages_LBL_userName = findViewById(R.id.messages_LBL_userName);

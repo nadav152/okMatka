@@ -2,6 +2,7 @@ package com.example.okmatka.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.okmatka.Activity_Messages;
+import com.example.okmatka.Activities.Activity_Messages;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
 
@@ -47,11 +48,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         //ImageView
         if (currentUser.getImageURL().equalsIgnoreCase("default"))
-            holder.item_IMG_userPic.setImageResource((R.mipmap.ic_launcher));
+            Glide.with(context)
+                    .load(R.drawable.general_user)
+                    .into(holder.userItem_IMG_userPic);
         else
             Glide.with(context)
                 .load(currentUser.getImageURL())
-                .into(holder.item_IMG_userPic);
+                .into(holder.userItem_IMG_userPic);
+
+        //status check
+        if (currentUser.getStatus().equals("online"))
+            holder.userItem_LBL_online.setBackgroundColor(Color.GREEN);
+        else
+            holder.userItem_LBL_online.setBackgroundColor(Color.RED);
+
 
         //setting holder listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -71,14 +81,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView item_IMG_userPic;
-        private TextView userItem_LBL_name;
+        private ImageView userItem_IMG_userPic;
+        private TextView userItem_LBL_name,userItem_LBL_online;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            item_IMG_userPic = itemView.findViewById(R.id.item_IMG_userPic);
+            userItem_IMG_userPic = itemView.findViewById(R.id.userItem_IMG_userPic);
             userItem_LBL_name = itemView.findViewById(R.id.userItem_LBL_name);
+            userItem_LBL_online = itemView.findViewById(R.id.userItem_LBL_online);
         }
     }
 

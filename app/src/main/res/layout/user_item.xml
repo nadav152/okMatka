@@ -7,27 +7,35 @@
 
 
     <ImageView
-        android:id="@+id/item_IMG_userPic"
-        android:layout_width="112dp"
-        android:layout_height="85dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:id="@+id/userItem_IMG_userPic"
+        android:layout_width="85dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+         />
+
+    <TextView
+        android:id="@+id/userItem_LBL_online"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/userItem_IMG_userPic"
+        android:background="@color/fui_transparent"/>
 
     <TextView
         android:id="@+id/userItem_LBL_name"
         android:layout_width="wrap_content"
         android:layout_height="22dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="36dp"
         android:text="user name"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/item_IMG_userPic"
+        app:layout_constraintStart_toEndOf="@+id/userItem_IMG_userPic"
         app:layout_constraintTop_toTopOf="parent" />
 
 

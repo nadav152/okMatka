@@ -1,4 +1,4 @@
-package com.example.okmatka;
+package com.example.okmatka.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.okmatka.Fragments.Chats_Fragment;
+import com.example.okmatka.Fragments.Profiles_Fragment;
 import com.example.okmatka.Fragments.MatchingUsers_Fragment;
+import com.example.okmatka.MySignal;
+import com.example.okmatka.R;
+import com.example.okmatka.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,11 +28,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Activity_Main extends AppCompatActivity {
 
     private FirebaseUser firebaseUser;
-    private DatabaseReference myRef;
+    private DatabaseReference myUserRef;
     private TabLayout profiles_TAB_tabLayout;
     private ViewPager profiles_VPR_viewPager;
     private ViewPagerAdapter viewPagerAdapter;
@@ -44,10 +48,22 @@ public class Activity_Main extends AppCompatActivity {
         setTabs();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkStatus("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        checkStatus("offline");
+    }
+
     private void setTabs() {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFraments(new Profiles_Fragment(),"Profiles");
         viewPagerAdapter.addFraments(new MatchingUsers_Fragment(),"Matches");
-        viewPagerAdapter.addFraments(new Chats_Fragment(),"Chats");
 
         //setting the viewPager into the tabLayout
         profiles_VPR_viewPager.setAdapter(viewPagerAdapter);
@@ -57,17 +73,17 @@ public class Activity_Main extends AppCompatActivity {
 
     private void setFireBase() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        myRef = FirebaseDatabase.getInstance().
+        myUserRef = FirebaseDatabase.getInstance().
                 getReference("USERS_LIST").child(firebaseUser.getUid());
     }
 
     private void readDate() {
-        myRef.addValueEventListener(new ValueEventListener() {
+        myUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 assert user != null;
-                MySignal.getInstance().showToast("User : " + user.getName() + " Logged in");
+                MySignal.getInstance().showToast("User : " + user.getName() + " is logged in");
 
             }
 
@@ -89,16 +105,29 @@ public class Activity_Main extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_ITM_logout) {
             //Logging out
             FirebaseAuth.getInstance().signOut();
-            moveToLogin();
+            changeActivity(Activity_Main.this,Activity_Login.class,true);
+            return true;
+        }
+        else if(item.getItemId() == R.id.menu_ITM_settings){
+            //Going to settings Activity
+            changeActivity(Activity_Main.this,Activity_Settings.class,false);
             return true;
         }
         return false;
     }
 
-    private void moveToLogin() {
-        Intent intent = new Intent(Activity_Main.this,Activity_Login.class);
+
+    private void changeActivity(Activity_Main activity, Class<?> activityClass,boolean finish) {
+        Intent intent = new Intent(activity, activityClass);
         startActivity(intent);
-        finish();
+        if (finish)
+            finish();
+    }
+
+    private void checkStatus(String status){
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        myUserRef.updateChildren(hashMap);
     }
 
     private void findViews() {
