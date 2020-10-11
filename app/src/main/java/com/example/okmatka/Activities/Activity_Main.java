@@ -13,19 +13,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.okmatka.Fragments.Profiles_Fragment;
 import com.example.okmatka.Fragments.MatchingUsers_Fragment;
-import com.example.okmatka.MySignal;
+import com.example.okmatka.Fragments.Profiles_Fragment;
+import com.example.okmatka.MyFireBase;
 import com.example.okmatka.R;
-import com.example.okmatka.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +40,6 @@ public class Activity_Main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViews();
         setFireBase();
-        readDate();
         setTabs();
     }
 
@@ -74,24 +69,7 @@ public class Activity_Main extends AppCompatActivity {
     private void setFireBase() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         myUserRef = FirebaseDatabase.getInstance().
-                getReference("USERS_LIST").child(firebaseUser.getUid());
-    }
-
-    private void readDate() {
-        myUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                assert user != null;
-                MySignal.getInstance().showToast("User : " + user.getName() + " is logged in");
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                getReference(MyFireBase.KEYS.USERS_LIST).child(firebaseUser.getUid());
     }
 
     @Override

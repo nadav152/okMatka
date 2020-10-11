@@ -115,7 +115,6 @@
             android:layout_marginStart="50dp"
             android:layout_marginLeft="50dp"
             android:padding="10dp"
-
             android:tag="red"
             android:text="@string/bad_match"
             android:textColor="@color/redColor"

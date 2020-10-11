@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.okmatka.Adapters.UserAdapter;
+import com.example.okmatka.MyFireBase;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,9 +28,9 @@ public class MatchingUsers_Fragment extends Fragment {
 
     private RecyclerView matchingUsers_RCV_recyclerView;
     private UserAdapter userAdapter;
-    private ArrayList<User> userList;
+    private ArrayList<User> matchingUsersList;
     private FirebaseUser firebaseUser;
-    private DatabaseReference myRef;
+    private DatabaseReference myMatchesRef;
 
     public MatchingUsers_Fragment() {
     }
@@ -47,24 +48,26 @@ public class MatchingUsers_Fragment extends Fragment {
 
     private void setFirebase() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        myRef = FirebaseDatabase.getInstance().getReference("USERS_LIST");
-        userList = new ArrayList<>();
+        myMatchesRef = FirebaseDatabase.getInstance().
+                getReference(MyFireBase.KEYS.USERS_LIST).
+                child(firebaseUser.getUid()).child(MyFireBase.KEYS.USER_MATCHES_LIST);
+        matchingUsersList = new ArrayList<>();
     }
 
     private void readUsers() {
-        myRef.addValueEventListener(new ValueEventListener() {
+        myMatchesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userList.clear();
+                matchingUsersList.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     User user = snap.getValue(User.class);
 
                     assert user != null;
                     if (!user.getId().equals(firebaseUser.getUid()))
-                        userList.add(user);
+                        matchingUsersList.add(user);
 
                 }
-                userAdapter = new UserAdapter(getContext(), userList);
+                userAdapter = new UserAdapter(getContext(), matchingUsersList);
                 matchingUsers_RCV_recyclerView.setAdapter(userAdapter);
             }
 

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.okmatka.Adapters.MessageAdapter;
 import com.example.okmatka.ChatMessage;
+import com.example.okmatka.MyFireBase;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
@@ -88,7 +89,7 @@ public class Activity_Messages extends AppCompatActivity {
         hashMap.put("receiver",receiver);
         hashMap.put("message",message);
 
-        myRef.child("USERS_CHATS").push().setValue(hashMap);
+        myRef.child(MyFireBase.KEYS.USERS_CHATS).push().setValue(hashMap);
 
     }
 
@@ -98,7 +99,7 @@ public class Activity_Messages extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert userISpeakWithId != null;
-        DatabaseReference userISpeakWithReference = myRef.child("USERS_LIST").child(userISpeakWithId);
+        DatabaseReference userISpeakWithReference = myRef.child(MyFireBase.KEYS.USERS_LIST).child(userISpeakWithId);
         userISpeakWithReference.addValueEventListener(valueListener());
     }
 
@@ -129,7 +130,7 @@ public class Activity_Messages extends AppCompatActivity {
 
     private void readMessage(final String myId, final String userISpeakToId) {
         chatsList = new ArrayList<>();
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("USERS_CHATS");
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(MyFireBase.KEYS.USERS_CHATS);
         myRef.addValueEventListener(readMessageListener(myId, userISpeakToId));
 
     }

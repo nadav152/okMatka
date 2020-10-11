@@ -8,6 +8,6 @@ public class MyApp extends Application {
         super.onCreate();
         MySignal.initHelper(this);
         MySP.initHelper(this);
-//        MyFireBase.initHelper(this);
+        MyFireBase.initHelper(this);
     }
 }
