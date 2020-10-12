@@ -62,7 +62,8 @@ public class Profiles_Fragment extends Fragment {
         return new FireBaseCallBack() {
             @Override
             public void onCallBack(List<User> list) {
-                setNextUser();
+                if(getActivity()!=null)
+                    setNextUser();
             }
         };
     }
@@ -196,12 +197,16 @@ public class Profiles_Fragment extends Fragment {
         else
             Glide.with(this).load(currentUser.getImageURL()).into(profiles_IMG_character_pic);
 
-        profiles_LBL_name.setText(currentUser.getName());
-        profiles_LBL_age.setText(String.valueOf(currentUser.getAge()));
-        profiles_LBL_roll.setText(currentUser.getRoll());
-        profiles_LBL_experience.setText(currentUser.getExperience());
-        profiles_LBL_favourite_beach.setText(currentUser.getFavouriteBeach());
-        profiles_LBL_rate.setText(String.valueOf(currentUser.getRate()));
+        setValue(profiles_LBL_name,"Name : " + currentUser.getName());
+        setValue(profiles_LBL_age,"Age : " + currentUser.getAge());
+        setValue(profiles_LBL_roll,"Roll : " + currentUser.getRoll());
+        setValue(profiles_LBL_experience,"Experience : " + currentUser.getExperience());
+        setValue(profiles_LBL_favourite_beach, "Favourite Beach : " + currentUser.getFavouriteBeach());
+        setValue(profiles_LBL_rate,"Rate : " + currentUser.getRate());
+    }
+
+    private void setValue(TextView textView, String name) {
+        textView.setText(name);
     }
 
     private void setClickers() {
