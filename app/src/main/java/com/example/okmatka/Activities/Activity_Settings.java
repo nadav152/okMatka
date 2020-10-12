@@ -78,25 +78,6 @@ public class Activity_Settings extends AppCompatActivity {
 
     }
 
-    private void setSpinner() {
-        ArrayAdapter<CharSequence> arrayAdapter =
-                ArrayAdapter.createFromResource(this,R.array.Roll,android.R.layout.simple_spinner_item);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        settings_SPN_roll.setAdapter(arrayAdapter);
-        settings_SPN_roll.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedOption = String.valueOf(parent.getItemAtPosition(position));
-                myRef.child(MyFireBase.KEYS.ROLL).setValue(selectedOption);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -127,20 +108,6 @@ public class Activity_Settings extends AppCompatActivity {
 
             }
         };
-    }
-
-    private void updateMySpinner(User mySelf) {
-        if(mySelf.getRoll().equalsIgnoreCase("attack"))
-        settings_SPN_roll.setSelection(0);
-        else
-            settings_SPN_roll.setSelection(1);
-    }
-
-    private void updateMyPhoto(User mySelf) {
-        if(mySelf.getImageURL().equalsIgnoreCase("default"))
-            Glide.with(getApplicationContext()).load(R.drawable.general_user).into(setting_IMG_profilePic);
-        else
-            Glide.with(getApplicationContext()).load(mySelf.getImageURL()).into(setting_IMG_profilePic);
     }
 
     private void selectImage() {
@@ -227,6 +194,29 @@ public class Activity_Settings extends AppCompatActivity {
         }
     }
 
+    private void setSpinner() {
+        ArrayAdapter<CharSequence> arrayAdapter =
+                ArrayAdapter.createFromResource(this,R.array.Roll,android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        settings_SPN_roll.setAdapter(arrayAdapter);
+        spinnerItemListener();
+    }
+
+    private void spinnerItemListener() {
+        settings_SPN_roll.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedOption = String.valueOf(parent.getItemAtPosition(position));
+                myRef.child(MyFireBase.KEYS.ROLL).setValue(selectedOption);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     private View.OnClickListener myDetailsListener() {
         return new View.OnClickListener() {
             @Override
@@ -282,6 +272,20 @@ public class Activity_Settings extends AppCompatActivity {
         settings_LAY_favouriteBeach.setHint(mySelf.getFavouriteBeach());
     }
 
+    private void updateMySpinner(User mySelf) {
+        if(mySelf.getRoll().equalsIgnoreCase("attack"))
+            settings_SPN_roll.setSelection(0);
+        else
+            settings_SPN_roll.setSelection(1);
+    }
+
+    private void updateMyPhoto(User mySelf) {
+        if(mySelf.getImageURL().equalsIgnoreCase("default"))
+            Glide.with(getApplicationContext()).load(R.drawable.general_user).into(setting_IMG_profilePic);
+        else
+            Glide.with(getApplicationContext()).load(mySelf.getImageURL()).into(setting_IMG_profilePic);
+    }
+
     private void initFireBase() {
         storageReference = FirebaseStorage.getInstance().getReference(MyFireBase.KEYS.UPLOADS);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -311,12 +315,10 @@ public class Activity_Settings extends AppCompatActivity {
         setting_FAB_favouriteBeach = findViewById(R.id.setting_FAB_favouriteBeach);
 
         settings_LAY_username = findViewById(R.id.settings_LAY_username);
-              settings_LAY_age = findViewById(R.id.settings_LAY_age);
-       settings_LAY_experience = findViewById(R.id.settings_LAY_experience);
-   settings_LAY_favouriteBeach = findViewById(R.id.settings_LAY_favouriteBeach);
+        settings_LAY_age = findViewById(R.id.settings_LAY_age);
+        settings_LAY_experience = findViewById(R.id.settings_LAY_experience);
+        settings_LAY_favouriteBeach = findViewById(R.id.settings_LAY_favouriteBeach);
 
         settings_SPN_roll = findViewById(R.id.settings_SPN_roll);
     }
 }
-
-//todo change to roll selection
