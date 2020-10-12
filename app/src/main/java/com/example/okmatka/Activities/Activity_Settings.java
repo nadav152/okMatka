@@ -226,27 +226,31 @@ public class Activity_Settings extends AppCompatActivity {
                         selectImage();
                         break;
                     case "username" :
-                        submitData(settings_LAY_username,settings_EDT_username,MyFireBase.KEYS.NAME,false);
+                        submitData(settings_LAY_username,settings_EDT_username,
+                                MyFireBase.KEYS.NAME,"Name - ",false);
                         break;
                     case "age":
-                        submitData(settings_LAY_age, settings_EDT_age,MyFireBase.KEYS.AGE,true);
+                        submitData(settings_LAY_age, settings_EDT_age,
+                                MyFireBase.KEYS.AGE,"Age - ",true);
                         break;
                     case "experience" :
-                        submitData(settings_LAY_experience, settings_EDT_experience,MyFireBase.KEYS.EXPERIENCE,false);
+                        submitData(settings_LAY_experience, settings_EDT_experience,
+                                MyFireBase.KEYS.EXPERIENCE,"Experience - ",false);
                         break;
                     case "favouriteBeach":
-                        submitData(settings_LAY_favouriteBeach, settings_EDT_favouriteBeach,MyFireBase.KEYS.FAVOURITE_BEACH,false);
+                        submitData(settings_LAY_favouriteBeach, settings_EDT_favouriteBeach,
+                                MyFireBase.KEYS.FAVOURITE_BEACH,"Favourite Beach - ",false);
                         break;
                 }
             }
         };
     }
 
-    private void submitData(TextInputLayout textInputLayout, TextInputEditText editText, String fireBaseKey, boolean isInt) {
+    private void submitData(TextInputLayout textInputLayout, TextInputEditText editText, String fireBaseKey, String entryStr, boolean isInt) {
         String newValue = String.valueOf(editText.getText());
 
         if (!newValue.equals("")) {
-            textInputLayout.setHint(newValue);
+            textInputLayout.setHint(entryStr + newValue);
             if (isInt)
                 myRef.child(fireBaseKey).setValue(Integer.parseInt(newValue));
             else
@@ -266,10 +270,10 @@ public class Activity_Settings extends AppCompatActivity {
     }
 
     private void updateMyEditTexts(User mySelf) {
-        settings_LAY_username.setHint(mySelf.getName());
-        settings_LAY_age.setHint(String.valueOf(mySelf.getAge()));
-        settings_LAY_experience.setHint(mySelf.getExperience());
-        settings_LAY_favouriteBeach.setHint(mySelf.getFavouriteBeach());
+        settings_LAY_username.setHint("Name - " + mySelf.getName());
+        settings_LAY_age.setHint("Age - " + mySelf.getAge());
+        settings_LAY_experience.setHint("Experience - " + mySelf.getExperience());
+        settings_LAY_favouriteBeach.setHint("Favourite Beach - " + mySelf.getFavouriteBeach());
     }
 
     private void updateMySpinner(User mySelf) {
