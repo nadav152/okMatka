@@ -37,7 +37,6 @@ public class Activity_Login extends AppCompatActivity {
         setFireBase();
         setListeners();
         glide(R.drawable.img_mainlogo_jpg, Login_IMG_appLogo);
-
     }
 
     @Override
@@ -49,7 +48,7 @@ public class Activity_Login extends AppCompatActivity {
     private void checkIfUserAlreadyLoggedOn() {
         //checking if a user is already logged in
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(firebaseUser!=null) {
+        if(firebaseUser != null) {
             Intent intent = new Intent(Activity_Login.this, Activity_Main.class);
             startActivity(intent);
             finish();

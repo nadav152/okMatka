@@ -17,11 +17,15 @@ import com.example.okmatka.Fragments.MatchingUsers_Fragment;
 import com.example.okmatka.Fragments.Profiles_Fragment;
 import com.example.okmatka.MyFireBase;
 import com.example.okmatka.R;
+import com.example.okmatka.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +74,38 @@ public class Activity_Main extends AppCompatActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         myUserRef = FirebaseDatabase.getInstance().
                 getReference(MyFireBase.KEYS.USERS_LIST).child(firebaseUser.getUid());
+
+        /* keeping my matches updated
+            the listener will be activated on the main activity
+         */
+        myUserRef.addValueEventListener(myDetailsListener());
     }
+
+    private ValueEventListener myDetailsListener() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User mySelf = snapshot.getValue(User.class);
+                assert mySelf != null;
+
+                //notifying my matches on my settings updates
+                for(DataSnapshot myMatch : snapshot.child(MyFireBase.KEYS.USER_MATCHES_LIST).getChildren()) {
+                    User myMatchUser = myMatch.getValue(User.class);
+                    assert myMatchUser != null;
+                    updateMyMatch(myMatchUser,mySelf);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        };
+    }
+
+    private void updateMyMatch(User myMatchUser, User mySelf) {
+        DatabaseReference myMatchRef = MyFireBase.getInstance()
+                .getReference(MyFireBase.KEYS.USERS_LIST).child(myMatchUser.getId());
+        myMatchRef.child(MyFireBase.KEYS.USER_MATCHES_LIST).child(mySelf.getId()).setValue(mySelf);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,6 +142,8 @@ public class Activity_Main extends AppCompatActivity {
         hashMap.put("status",status);
         myUserRef.updateChildren(hashMap);
     }
+
+
 
     private void findViews() {
         profiles_TAB_tabLayout = findViewById(R.id.profiles_TAB_tabLayout);

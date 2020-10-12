@@ -42,6 +42,12 @@
     <string name="this_will_be_favourite_beach">this will be favourite beach</string>
     <string name="logout">Logout</string>
     <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="tap_the_picture_to_change_it">Tap the picture to change it</string>
+    <string name="last_name">Last Name</string>
+    <string name="your_roll">Your Roll</string>
+    <string name="experience">Experience</string>
+    <string name="favourite_beach">Favourite Beach</string>
 
 
 </resources>

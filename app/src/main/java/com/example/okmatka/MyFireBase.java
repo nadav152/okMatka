@@ -41,6 +41,7 @@ public class MyFireBase {
         String USERS_CHATS = "USERS_CHATS/";
         String USER_LIKES_LIST = "USER_LIKES_LIST/";
         String USER_MATCHES_LIST = "USER_MATCHES_LIST/";
+        String UPLOADS = "UPLOADS";
     }
 
 

@@ -139,10 +139,9 @@ public class Profiles_Fragment extends Fragment {
                     assert currentUser != null;
                     if (!currentUser.getId().equals(firebaseUser.getUid()))
                         appUserslist.add(currentUser);
-
-                    index = appUserslist.size();
-                    fireBaseCallBack.onCallBack(appUserslist);
                 }
+                index = appUserslist.size();
+                fireBaseCallBack.onCallBack(appUserslist);
             }
 
             @Override

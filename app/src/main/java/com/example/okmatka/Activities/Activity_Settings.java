@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.okmatka.MyFireBase;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
@@ -24,6 +25,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +45,8 @@ public class Activity_Settings extends AppCompatActivity {
 
     private TextView setting_LBL_userName;
     private ImageView setting_IMG_profilePic;
+    private TextInputEditText setting_EDT_username, settings_EDT_lastName,
+            settings_EDT_email, settings_EDT_experience, settings_EDT_favouriteBeach;
     private DatabaseReference myRef;
     private FirebaseUser firebaseUser;
     private StorageReference storageReference;
@@ -59,32 +63,51 @@ public class Activity_Settings extends AppCompatActivity {
         setListeners();
     }
 
-    private void setListeners() {
-        myRef.addValueEventListener(mySettingsListener());
-        setting_IMG_profilePic.setOnClickListener(profilePicListener());
+    @Override
+    protected void onStart() {
+        super.onStart();
+        myRef.addValueEventListener(mySettingsFireBaseListener());
     }
 
-    private View.OnClickListener profilePicListener() {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        myRef.removeEventListener(mySettingsFireBaseListener());
+    }
+
+
+    private void setListeners() {
+        setting_IMG_profilePic.setOnClickListener(myDetailsListener());
+        //todo add all the other settings listeners
+    }
+
+    private View.OnClickListener myDetailsListener() {
         return new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                selectImage();
+            public void onClick(View view) {
+                if (((String) view.getTag()).equals("profilePic")) {
+                    selectImage();
+                } else if(((String) view.getTag()).equals("username")){
+                  changeName();
+                }
+
             }
         };
     }
 
-    private ValueEventListener mySettingsListener() {
+    private void changeName() {
+        String newName = String.valueOf(setting_EDT_username.getText());
+    }
+
+    private ValueEventListener mySettingsFireBaseListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User mySelf = snapshot.getValue(User.class);
                 assert mySelf != null;
+                //implementing my changes
                 setting_LBL_userName.setText(mySelf.getName());
-
-                if(mySelf.getImageURL().equalsIgnoreCase("default"))
-                    Glide.with(getApplicationContext()).load(R.drawable.general_user).into(setting_IMG_profilePic);
-                else
-                    Glide.with(getApplicationContext()).load(mySelf.getImageURL()).into(setting_IMG_profilePic);
+                updateMyPhoto(mySelf);
             }
 
             @Override
@@ -94,6 +117,13 @@ public class Activity_Settings extends AppCompatActivity {
         };
     }
 
+    private void updateMyPhoto(User mySelf) {
+        if(mySelf.getImageURL().equalsIgnoreCase("default"))
+            Glide.with(getApplicationContext()).load(R.drawable.general_user).into(setting_IMG_profilePic);
+        else
+            Glide.with(getApplicationContext()).load(mySelf.getImageURL()).into(setting_IMG_profilePic);
+    }
+
     private void selectImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -101,7 +131,7 @@ public class Activity_Settings extends AppCompatActivity {
         startActivityForResult(intent,IMAGE_REQUEST);
     }
 
-    private String getFileExtention(Uri uri) {
+    private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getApplicationContext().getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
@@ -114,7 +144,7 @@ public class Activity_Settings extends AppCompatActivity {
 
         if (imageUri != null){
             final StorageReference fileReference = storageReference.
-                    child(System.currentTimeMillis() + "." + getFileExtention(imageUri));
+                    child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
             storageTask = fileReference.putFile(imageUri);
             storageTask.continueWithTask(continuationListener(fileReference))
                     .addOnCompleteListener(continuationCompleteListener(progressDialog))
@@ -152,6 +182,7 @@ public class Activity_Settings extends AppCompatActivity {
         };
     }
 
+
     private OnFailureListener continuationFailureListener(final ProgressDialog progressDialog) {
         return new OnFailureListener() {
             @Override
@@ -179,15 +210,21 @@ public class Activity_Settings extends AppCompatActivity {
     }
 
     private void initFireBase() {
-        storageReference = FirebaseStorage.getInstance().getReference("UPLOADS");
+        storageReference = FirebaseStorage.getInstance().getReference(MyFireBase.KEYS.UPLOADS);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         myRef = FirebaseDatabase.getInstance().
-                getReference("USERS_LIST").child(firebaseUser.getUid());
+                getReference(MyFireBase.KEYS.USERS_LIST).child(firebaseUser.getUid());
     }
 
     private void findViews() {
         setting_LBL_userName = findViewById(R.id.setting_LBL_userName);
         setting_IMG_profilePic = findViewById(R.id.setting_IMG_profilePic);
+
+        setting_EDT_username = findViewById(R.id.setting_EDT_username);
+        settings_EDT_lastName = findViewById(R.id.settings_EDT_lastName);
+        settings_EDT_email = findViewById(R.id.settings_EDT_email);
+        settings_EDT_experience = findViewById(R.id.settings_EDT_experience);
+        settings_EDT_favouriteBeach = findViewById(R.id.settings_EDT_favouriteBeach);
     }
 }
 
