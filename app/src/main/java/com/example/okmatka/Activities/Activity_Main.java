@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.example.okmatka.Fragments.MatchingUsers_Fragment;
 import com.example.okmatka.Fragments.Profiles_Fragment;
 import com.example.okmatka.MyFireBase;
@@ -54,6 +55,7 @@ public class Activity_Main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViews();
         setAnimations();
+        loadFloatBtnPictures();
         //todo load picture to float button on glide
         setClickersListeners();
         setFireBase();
@@ -133,8 +135,10 @@ public class Activity_Main extends AppCompatActivity {
                     addButtons();
                 else if(view.getTag().equals("settings"))
                     changeActivity(Activity_Main.this, Activity_Settings.class,false);
-                else
-                    changeActivity(Activity_Main.this, Activity_Login.class,true);
+                else {
+                    FirebaseAuth.getInstance().signOut();
+                    changeActivity(Activity_Main.this, Activity_Login.class, true);
+                }
             }
         };
     }
@@ -142,7 +146,19 @@ public class Activity_Main extends AppCompatActivity {
     private void addButtons() {
         setvisiblty(clickable);
         setButtonsAnimation(clickable);
+        setClicks(clickable);
         clickable = !clickable;
+    }
+
+    private void setClicks(boolean clickable) {
+        if(!clickable) {
+            main_FAB_settings.setClickable(true);
+            main_FAB_logout.setClickable(true);
+        }else {
+            main_FAB_settings.setClickable(false);
+            main_FAB_logout.setClickable(false);
+        }
+
     }
 
     private void setButtonsAnimation(boolean startSetting) {
@@ -185,6 +201,12 @@ public class Activity_Main extends AppCompatActivity {
         cloeAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
         fromTopAnimation = AnimationUtils.loadAnimation(this, R.anim.from_top_anim);
         toBTopAnimation = AnimationUtils.loadAnimation(this, R.anim.to_top_anim);
+    }
+
+    private void loadFloatBtnPictures() {
+        Glide.with(this).load(R.drawable.add).into(main_FAB_add);
+        Glide.with(this).load(R.drawable.settings).into(main_FAB_settings);
+        Glide.with(this).load(R.drawable.exit_user).into(main_FAB_logout);
     }
 
     private void findViews() {

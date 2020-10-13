@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:fabCustomSize="45dp"
         app:maxImageSize="20dp"
-        app:srcCompat="@drawable/add" />
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/main_FAB_add"
         app:fabCustomSize="45dp"
         app:maxImageSize="20dp"
-        app:srcCompat="@drawable/settings" />
+         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/main_FAB_logout"
@@ -60,7 +60,7 @@
         app:layout_constraintTop_toBottomOf="@+id/main_FAB_settings"
         app:fabCustomSize="45dp"
         app:maxImageSize="20dp"
-        app:srcCompat="@drawable/exit_user" />
+       />
 
 
     <com.google.android.material.tabs.TabLayout

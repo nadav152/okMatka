@@ -48,6 +48,8 @@ public class MyFireBase {
         String AGE = "age";
         String FAVOURITE_BEACH = "favouriteBeach";
         String IMG_URL = "imageURL";
+        String RATE = "rate";
+        String NUMBER_OF_REVIEWS = "numberOfReviews";
     }
 
 

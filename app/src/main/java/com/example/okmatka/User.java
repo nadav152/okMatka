@@ -1,16 +1,11 @@
 package com.example.okmatka;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class User {
 
     private String password, name, lastName, roll, experience, favouriteBeach, email,imageURL;
     private int age, numberOfReviews;
     private double rate;
     private String id = "",status;
-    private HashMap<String,User> likedPeopleList;
-    private ArrayList<User> chatList;
 
 
     public User() {
@@ -31,8 +26,6 @@ public class User {
         this.id = "";
         this.imageURL = "default";
         this.status = "";
-        this.likedPeopleList = new HashMap<>();
-        this.chatList = new ArrayList<>();
     }
 
     public void setPassword(String password) {
@@ -127,28 +120,12 @@ public class User {
         this.id = id;
     }
 
-    public HashMap<String, User> getLikedPeopleList() {
-        return likedPeopleList;
-    }
-
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public void setLikedPeopleList(HashMap<String, User> likedPeopleList) {
-        this.likedPeopleList = likedPeopleList;
-    }
-
-    public ArrayList<User> getChatList() {
-        return chatList;
-    }
-
-    public void setChatList(ArrayList<User> chatList) {
-        this.chatList = chatList;
     }
 
     public Boolean isTheSame(User o) {

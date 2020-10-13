@@ -49,6 +49,8 @@
     <string name="experience">Experience</string>
     <string name="favourite_beach">Favourite Beach</string>
     <string name="age">Age</string>
+    <string name="chat">chat</string>
+    <string name="rate_your_friend">Rate Me</string>
 
 
 </resources>

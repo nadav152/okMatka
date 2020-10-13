@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +46,7 @@ import java.util.Objects;
 
 public class Activity_Settings extends AppCompatActivity {
 
+    private TextView setting_EDT_rate;
     private ImageView setting_IMG_profilePic;
     private TextInputEditText settings_EDT_username, settings_EDT_age,
              settings_EDT_experience, settings_EDT_favouriteBeach;
@@ -95,6 +95,7 @@ public class Activity_Settings extends AppCompatActivity {
                 updateMyPhoto(mySelf);
                 updateMyEditTexts(mySelf);
                 updateMySpinner(mySelf);
+                updateMyRate(mySelf);
             }
 
             @Override
@@ -102,6 +103,11 @@ public class Activity_Settings extends AppCompatActivity {
 
             }
         };
+    }
+
+    private void updateMyRate(User user) {
+        String myRate = "Your Rate : " + user.getRate();
+        setting_EDT_rate.setText(myRate);
     }
 
     private void selectImage() {
@@ -193,18 +199,6 @@ public class Activity_Settings extends AppCompatActivity {
 
     }
 
-    private AdapterView.OnItemSelectedListener AutoCompleteListener = new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("ppp", "got to item selected");
-                String selectedOption = String.valueOf(parent.getItemAtPosition(position));
-                myRef.child(MyFireBase.KEYS.ROLL).setValue(selectedOption);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-    };
-
     private View.OnClickListener myDetailsListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -244,11 +238,19 @@ public class Activity_Settings extends AppCompatActivity {
         String newValue = String.valueOf(editText.getText());
 
         if (!newValue.equals("")) {
-            textInputLayout.setHint(entryStr + newValue);
+            //if user edit his age
             if (isInt)
+                if (android.text.TextUtils.isDigitsOnly(newValue))
                 myRef.child(fireBaseKey).setValue(Integer.parseInt(newValue));
+                else {
+                    MySignal.getInstance().showToast("Age must be numeric");
+                    return;
+                }
             else
+            //user edit his other info
                 myRef.child(fireBaseKey).setValue(newValue);
+
+            textInputLayout.setHint(entryStr + newValue);
         }
         editText.setText("");
     }
@@ -288,6 +290,7 @@ public class Activity_Settings extends AppCompatActivity {
 
     private void findViews() {
         setting_IMG_profilePic = findViewById(R.id.setting_IMG_profilePic);
+        setting_EDT_rate = findViewById(R.id.setting_EDT_rate);
 
         settings_EDT_username = findViewById(R.id.settings_EDT_username);
         settings_EDT_age = findViewById(R.id.settings_EDT_age);
