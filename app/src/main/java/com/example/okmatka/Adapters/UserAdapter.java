@@ -92,10 +92,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private boolean checkRate(String rateResult) {
         if(android.text.TextUtils.isDigitsOnly(rateResult)){
             double numericResult = Double.parseDouble(rateResult);
-            if (numericResult < 10 && numericResult >= 0)
+            if (numericResult <= 10 && numericResult >= 0)
                 return true;
             else
-                MySignal.getInstance().showToast("Rate must be 0-9");
+                MySignal.getInstance().showToast("Rate must be 0-10");
             return false;
         }
         MySignal.getInstance().showToast("Rate must be a number");
