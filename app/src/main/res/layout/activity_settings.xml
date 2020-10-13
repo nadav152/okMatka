@@ -128,7 +128,7 @@
         android:id="@+id/settings_LAY_roll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:layout_margin="10dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:hint="Roll Type">
 
@@ -142,20 +142,16 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="5dp">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/setting_BTN_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_marginTop="9dp"
         android:tag="favouriteBeach"
         android:text="Submit"
         app:backgroundTint="@color/colorPrimary" />
 
-    </LinearLayout>
+
 </LinearLayout>
