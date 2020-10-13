@@ -7,11 +7,67 @@
     tools:context=".Activities.Activity_Main"
     >
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_FAB_add"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tag="plus"
+        android:tint="#FFFFFF"
+        app:backgroundTint="@color/colorPrimary"
+        android:background="@color/fui_transparent"
+        app:elevation="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:fabCustomSize="45dp"
+        app:maxImageSize="20dp"
+        app:srcCompat="@drawable/add" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+        android:id="@+id/main_FAB_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tag="settings"
+        android:tint="#FFFFFF"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_FAB_add"
+        app:fabCustomSize="45dp"
+        app:maxImageSize="20dp"
+        app:srcCompat="@drawable/settings" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_FAB_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tag="logout"
+        android:tint="#FFFFFF"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_FAB_settings"
+        app:fabCustomSize="45dp"
+        app:maxImageSize="20dp"
+        app:srcCompat="@drawable/exit_user" />
+
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/profiles_TAB_tabLayout"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_FAB_add"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -23,8 +79,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profiles_TAB_tabLayout">
+        app:layout_constraintTop_toBottomOf="@+id/profiles_TAB_tabLayout"
+        app:layout_constraintVertical_bias="0.0">
 
     </androidx.viewpager.widget.ViewPager>
 

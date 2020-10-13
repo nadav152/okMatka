@@ -2,8 +2,9 @@ package com.example.okmatka.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.example.okmatka.Fragments.Profiles_Fragment;
 import com.example.okmatka.MyFireBase;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,12 +39,23 @@ public class Activity_Main extends AppCompatActivity {
     private TabLayout profiles_TAB_tabLayout;
     private ViewPager profiles_VPR_viewPager;
     private ViewPagerAdapter viewPagerAdapter;
+    FloatingActionButton main_FAB_add;
+    FloatingActionButton main_FAB_settings;
+    FloatingActionButton main_FAB_logout;
+    private Animation openAnimation ;
+    private Animation cloeAnimation ;
+    private Animation fromTopAnimation;
+    private Animation toBTopAnimation;
+    private boolean clickable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViews();
+        setAnimations();
+        //todo load picture to float button on glide
+        setClickersListeners();
         setFireBase();
         setTabs();
     }
@@ -106,29 +119,53 @@ public class Activity_Main extends AppCompatActivity {
         myMatchRef.child(MyFireBase.KEYS.USER_MATCHES_LIST).child(mySelf.getId()).setValue(mySelf);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
-        return true;
+    private void setClickersListeners() {
+        main_FAB_add.setOnClickListener(buttonsListener());
+        main_FAB_logout.setOnClickListener(buttonsListener());
+        main_FAB_settings.setOnClickListener(buttonsListener());
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_ITM_logout) {
-            //Logging out
-            FirebaseAuth.getInstance().signOut();
-            changeActivity(Activity_Main.this,Activity_Login.class,true);
-            return true;
-        }
-        else if(item.getItemId() == R.id.menu_ITM_settings){
-            //Going to settings Activity
-            changeActivity(Activity_Main.this,Activity_Settings.class,false);
-            return true;
-        }
-        return false;
+    private View.OnClickListener buttonsListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(view.getTag().equals("plus"))
+                    addButtons();
+                else if(view.getTag().equals("settings"))
+                    changeActivity(Activity_Main.this, Activity_Settings.class,false);
+                else
+                    changeActivity(Activity_Main.this, Activity_Login.class,true);
+            }
+        };
     }
 
+    private void addButtons() {
+        setvisiblty(clickable);
+        setButtonsAnimation(clickable);
+        clickable = !clickable;
+    }
+
+    private void setButtonsAnimation(boolean startSetting) {
+        if (!startSetting){
+            main_FAB_settings.startAnimation(fromTopAnimation);
+            main_FAB_logout.startAnimation(fromTopAnimation);
+            main_FAB_add.startAnimation(openAnimation);
+        } else {
+            main_FAB_settings.startAnimation(toBTopAnimation);
+            main_FAB_logout.startAnimation(toBTopAnimation);
+            main_FAB_add.startAnimation(cloeAnimation);
+        }
+    }
+
+    private void setvisiblty(boolean makeVisible) {
+        if (!makeVisible){
+            main_FAB_settings.setVisibility(View.VISIBLE);
+            main_FAB_logout.setVisibility(View.VISIBLE);
+        }else {
+            main_FAB_settings.setVisibility(View.GONE);
+            main_FAB_logout.setVisibility(View.GONE);
+        }
+    }
 
     private void changeActivity(Activity_Main activity, Class<?> activityClass,boolean finish) {
         Intent intent = new Intent(activity, activityClass);
@@ -143,11 +180,19 @@ public class Activity_Main extends AppCompatActivity {
         myUserRef.updateChildren(hashMap);
     }
 
-
+    private void setAnimations() {
+        openAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
+        cloeAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
+        fromTopAnimation = AnimationUtils.loadAnimation(this, R.anim.from_top_anim);
+        toBTopAnimation = AnimationUtils.loadAnimation(this, R.anim.to_top_anim);
+    }
 
     private void findViews() {
         profiles_TAB_tabLayout = findViewById(R.id.profiles_TAB_tabLayout);
         profiles_VPR_viewPager = findViewById(R.id.profiles_VPR_viewPager);
+        main_FAB_add = findViewById(R.id.main_FAB_add);
+        main_FAB_settings = findViewById(R.id.main_FAB_settings);
+        main_FAB_logout = findViewById(R.id.main_FAB_logout);
     }
 
 

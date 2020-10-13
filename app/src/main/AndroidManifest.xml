@@ -37,10 +37,12 @@
             </intent-filter>
         </activity>
 
+<!--        android:theme="@style/Theme.MaterialComponents.Light"-->
+
         <activity
             android:name=".Activities.Activity_Main"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.Light">
+            >
         </activity>
 
         <activity

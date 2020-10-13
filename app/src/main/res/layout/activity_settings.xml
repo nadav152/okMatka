@@ -29,8 +29,8 @@
 
         <ImageView
             android:id="@+id/setting_IMG_profilePic"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="154dp"
+            android:layout_height="114dp"
             android:layout_below="@id/setting_LBL_profile"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
