@@ -47,6 +47,7 @@ public class MyFireBase {
         String EXPERIENCE = "experience";
         String AGE = "age";
         String FAVOURITE_BEACH = "favouriteBeach";
+        String IMG_URL = "imageURL";
     }
 
 

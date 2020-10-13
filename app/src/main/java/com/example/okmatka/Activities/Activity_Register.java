@@ -59,7 +59,7 @@ public class Activity_Register extends AppCompatActivity {
         public void onClick(View view) {
             MySignal.getInstance().addSound(R.raw.click);
             if (isValidUser())
-                saveUser(currentUser.getName(),currentUser.getEmail(),currentUser.getPassword());
+                saveUser(currentUser.getEmail(),currentUser.getPassword());
             else
                 MySignal.getInstance().showToast("Please fix it");
         }
@@ -74,7 +74,7 @@ public class Activity_Register extends AppCompatActivity {
         return false;
     }
 
-    private void saveUser(final String name, String email, final String password) {
+    private void saveUser(String email, final String password) {
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(saveUserCompleteListener());
     }
 

@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +28,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,39 +43,34 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 public class Activity_Settings extends AppCompatActivity {
 
-    private TextView setting_LBL_userName;
     private ImageView setting_IMG_profilePic;
     private TextInputEditText settings_EDT_username, settings_EDT_age,
              settings_EDT_experience, settings_EDT_favouriteBeach;
     private TextInputLayout settings_LAY_username, settings_LAY_age
-            , settings_LAY_experience, settings_LAY_favouriteBeach;
-    private FloatingActionButton setting_FAB_nameBtn, setting_FAB_ageBtn,
-             setting_FAB_experience, setting_FAB_favouriteBeach;
-    private Spinner settings_SPN_roll;
+            , settings_LAY_experience, settings_LAY_favouriteBeach, settings_LAY_roll;
+    private MaterialButton setting_BTN_submit;
+    private AutoCompleteTextView settings_LST_roll;
     private DatabaseReference myRef;
     private FirebaseUser firebaseUser;
     private StorageReference storageReference;
     private Uri imageUri;
     private StorageTask<UploadTask.TaskSnapshot> storageTask;
+    private User mySelf;
+    private String myUri = "";
     private static final int IMAGE_REQUEST = 1;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         findViews();
-        setFloatingButtons();
-        setSpinner();
+        setAutoCompleteTextView();
         initFireBase();
         setListeners();
-
     }
 
     @Override
@@ -94,10 +89,9 @@ public class Activity_Settings extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User mySelf = snapshot.getValue(User.class);
+                mySelf = snapshot.getValue(User.class);
                 assert mySelf != null;
                 //implementing my changes
-                setting_LBL_userName.setText(mySelf.getName());
                 updateMyPhoto(mySelf);
                 updateMyEditTexts(mySelf);
                 updateMySpinner(mySelf);
@@ -157,10 +151,7 @@ public class Activity_Settings extends AppCompatActivity {
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
                     Uri downLoadUri = task.getResult();
-                    String myUri = String.valueOf(downLoadUri);
-                    HashMap<String,Object> hashMap = new HashMap<>();
-                    hashMap.put("imageURL", myUri);
-                    myRef.updateChildren(hashMap);
+                    myUri = String.valueOf(downLoadUri);
                     progressDialog.dismiss();
                 }else
                     MySignal.getInstance().showToast("failed adding picture");
@@ -194,57 +185,60 @@ public class Activity_Settings extends AppCompatActivity {
         }
     }
 
-    private void setSpinner() {
-        ArrayAdapter<CharSequence> arrayAdapter =
-                ArrayAdapter.createFromResource(this,R.array.Roll,android.R.layout.simple_spinner_item);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        settings_SPN_roll.setAdapter(arrayAdapter);
-        spinnerItemListener();
+    private void setAutoCompleteTextView() {
+        String[] eventList = {"Defense", "Attack"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Activity_Settings.this,R.layout.list_item, eventList);
+            settings_LST_roll.setAdapter(adapter);
+
     }
 
-    private void spinnerItemListener() {
-        settings_SPN_roll.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private AdapterView.OnItemSelectedListener AutoCompleteListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("ppp", "got to item selected");
                 String selectedOption = String.valueOf(parent.getItemAtPosition(position));
                 myRef.child(MyFireBase.KEYS.ROLL).setValue(selectedOption);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) { }
+    };
 
-            }
-        });
-    }
-
-    private View.OnClickListener myDetailsListener() {
-        return new View.OnClickListener() {
+    private View.OnClickListener myDetailsListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (((String) view.getTag())){
-                    case "profilePic":
+                if (view.getTag().equals("profilePic"))
                         selectImage();
-                        break;
-                    case "username" :
-                        submitData(settings_LAY_username,settings_EDT_username,
-                                MyFireBase.KEYS.NAME,"Name - ",false);
-                        break;
-                    case "age":
-                        submitData(settings_LAY_age, settings_EDT_age,
-                                MyFireBase.KEYS.AGE,"Age - ",true);
-                        break;
-                    case "experience" :
-                        submitData(settings_LAY_experience, settings_EDT_experience,
-                                MyFireBase.KEYS.EXPERIENCE,"Experience - ",false);
-                        break;
-                    case "favouriteBeach":
-                        submitData(settings_LAY_favouriteBeach, settings_EDT_favouriteBeach,
-                                MyFireBase.KEYS.FAVOURITE_BEACH,"Favourite Beach - ",false);
-                        break;
-                }
+                else
+                    uploadUserInformation();
+
             }
-        };
+    };
+
+    private void uploadUserInformation() {
+        //uploading image
+        if (!myUri.equals(""))
+            myRef.child(MyFireBase.KEYS.IMG_URL).setValue(myUri);
+
+        //uploading the rest user info
+        submitData(settings_LAY_username,settings_EDT_username,
+                    MyFireBase.KEYS.NAME,"Name - ",false);
+
+        submitData(settings_LAY_age, settings_EDT_age,
+                    MyFireBase.KEYS.AGE,"Age - ",true);
+
+        submitData(settings_LAY_experience, settings_EDT_experience,
+                    MyFireBase.KEYS.EXPERIENCE,"Experience - ",false);
+
+        submitData(settings_LAY_favouriteBeach, settings_EDT_favouriteBeach,
+                    MyFireBase.KEYS.FAVOURITE_BEACH,"Favourite Beach - ",false);
+
+        String autoSelectText = String.valueOf(settings_LST_roll.getText());
+        if (!autoSelectText.equals(""))
+            myRef.child(MyFireBase.KEYS.ROLL).setValue(autoSelectText);
     }
+
 
     private void submitData(TextInputLayout textInputLayout, TextInputEditText editText, String fireBaseKey, String entryStr, boolean isInt) {
         String newValue = String.valueOf(editText.getText());
@@ -255,18 +249,13 @@ public class Activity_Settings extends AppCompatActivity {
                 myRef.child(fireBaseKey).setValue(Integer.parseInt(newValue));
             else
                 myRef.child(fireBaseKey).setValue(newValue);
-        } else
-            MySignal.getInstance().showToast("You can not send empty messages");
-
+        }
         editText.setText("");
     }
 
     private void setListeners() {
-        setting_IMG_profilePic.setOnClickListener(myDetailsListener());
-        setting_FAB_nameBtn.setOnClickListener(myDetailsListener());
-        setting_FAB_ageBtn.setOnClickListener(myDetailsListener());
-        setting_FAB_experience.setOnClickListener(myDetailsListener());
-        setting_FAB_favouriteBeach.setOnClickListener(myDetailsListener());
+        setting_IMG_profilePic.setOnClickListener(myDetailsListener);
+        setting_BTN_submit.setOnClickListener(myDetailsListener);
     }
 
     private void updateMyEditTexts(User mySelf) {
@@ -278,9 +267,9 @@ public class Activity_Settings extends AppCompatActivity {
 
     private void updateMySpinner(User mySelf) {
         if(mySelf.getRoll().equalsIgnoreCase("attack"))
-            settings_SPN_roll.setSelection(0);
+            settings_LAY_roll.setHint("Roll - Attack");
         else
-            settings_SPN_roll.setSelection(1);
+            settings_LAY_roll.setHint("Roll - Defense");
     }
 
     private void updateMyPhoto(User mySelf) {
@@ -297,15 +286,7 @@ public class Activity_Settings extends AppCompatActivity {
                 getReference(MyFireBase.KEYS.USERS_LIST).child(firebaseUser.getUid());
     }
 
-    private void setFloatingButtons() {
-        Glide.with(this).load(R.drawable.submit).into(setting_FAB_nameBtn);
-        Glide.with(this).load(R.drawable.submit).into(setting_FAB_ageBtn);
-        Glide.with(this).load(R.drawable.submit).into(setting_FAB_experience);
-        Glide.with(this).load(R.drawable.submit).into(setting_FAB_favouriteBeach);
-    }
-
     private void findViews() {
-        setting_LBL_userName = findViewById(R.id.setting_LBL_userName);
         setting_IMG_profilePic = findViewById(R.id.setting_IMG_profilePic);
 
         settings_EDT_username = findViewById(R.id.settings_EDT_username);
@@ -313,16 +294,13 @@ public class Activity_Settings extends AppCompatActivity {
         settings_EDT_experience = findViewById(R.id.settings_EDT_experience);
         settings_EDT_favouriteBeach = findViewById(R.id.settings_EDT_favouriteBeach);
 
-        setting_FAB_nameBtn = findViewById(R.id.setting_FAB_nameBtn);
-        setting_FAB_ageBtn = findViewById(R.id.setting_FAB_ageBtn);
-        setting_FAB_experience = findViewById(R.id.setting_FAB_experience);
-        setting_FAB_favouriteBeach = findViewById(R.id.setting_FAB_favouriteBeach);
-
         settings_LAY_username = findViewById(R.id.settings_LAY_username);
         settings_LAY_age = findViewById(R.id.settings_LAY_age);
         settings_LAY_experience = findViewById(R.id.settings_LAY_experience);
         settings_LAY_favouriteBeach = findViewById(R.id.settings_LAY_favouriteBeach);
+        settings_LAY_roll = findViewById(R.id.settings_LAY_roll);
 
-        settings_SPN_roll = findViewById(R.id.settings_SPN_roll);
+        setting_BTN_submit = findViewById(R.id.setting_BTN_submit);
+        settings_LST_roll = findViewById(R.id.settings_LST_roll);
     }
 }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/gradient_app_background"
     tools:context=".Activities.Activity_Settings">
 
 
@@ -21,29 +22,20 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="12dp"
             android:text="@string/profile"
-            android:textColor="@color/colorPrimary"
+            android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            />
 
         <ImageView
             android:id="@+id/setting_IMG_profilePic"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_below="@id/setting_LBL_userName"
+            android:layout_below="@id/setting_LBL_profile"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:tag="profilePic" />
 
-        <TextView
-            android:id="@+id/setting_LBL_userName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/setting_LBL_profile"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="@string/user_name"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -58,18 +50,12 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/settings_LAY_username"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="4"
             android:hint="@string/user_name"
             app:boxStrokeColor="@color/colorPrimaryDark">
 
@@ -83,30 +69,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/setting_FAB_nameBtn"
-            android:layout_width="9dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:layout_weight="1"
-            android:tag="username"
-            app:backgroundTint="@color/colorPrimary" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/settings_LAY_age"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="4"
+
             app:boxStrokeColor="@color/colorPrimaryDark">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -119,32 +88,12 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/setting_FAB_ageBtn"
-            android:layout_width="9dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:layout_weight="1"
-            android:tag="age"
-            app:backgroundTint="@color/colorPrimary" />
-
-
-    </LinearLayout>
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/settings_LAY_experience"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="4"
             app:boxStrokeColor="@color/colorPrimaryDark">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -157,30 +106,12 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/setting_FAB_experience"
-            android:layout_width="9dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:layout_weight="1"
-            android:tag="experience"
-            app:backgroundTint="@color/colorPrimary" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/settings_LAY_favouriteBeach"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="4"
             app:boxStrokeColor="@color/colorPrimaryDark">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -193,30 +124,38 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/setting_FAB_favouriteBeach"
-            android:layout_width="9dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:layout_weight="1"
-            android:tag="favouriteBeach"
-            app:backgroundTint="@color/colorPrimary" />
-
-
-    </LinearLayout>
-
-    <RelativeLayout
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/settings_LAY_roll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        android:hint="Roll Type">
 
-        <Spinner
-            android:id="@+id/settings_SPN_roll"
-            android:layout_width="wrap_content"
+        <AutoCompleteTextView
+            android:id="@+id/settings_LST_roll"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"
+            android:inputType="none"
+            android:background="@color/whiteColor"
             />
 
-    </RelativeLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/setting_BTN_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:tag="favouriteBeach"
+        android:text="Submit"
+        app:backgroundTint="@color/colorPrimary" />
+
+    </LinearLayout>
 </LinearLayout>
