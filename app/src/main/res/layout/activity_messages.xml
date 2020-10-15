@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".Activities.Activity_Messages">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/messages_TLB_toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messages_LAY_toolbar"
         android:layout_width="409dp"
         android:layout_height="56dp"
         android:background="?attr/colorPrimary"
@@ -21,17 +21,60 @@
             android:id="@+id/messages_IMG_userPic"
             android:layout_width="55dp"
             android:layout_height="55dp"
+            android:layout_toStartOf="@+id/messages_LBL_userName"
+            android:layout_toLeftOf="@+id/messages_LBL_userName"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:padding="5dp"
-            android:layout_marginLeft="20dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+             />
 
         <TextView
             android:id="@+id/messages_LBL_userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/user_name" />
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/user_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/messages_IMG_userPic"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/messages_BTN_mapButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/fui_transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/messages_STC_locationAllow"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+           />
 
-    </androidx.appcompat.widget.Toolbar>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/messages_STC_locationAllow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            app:layout_constraintBottom_toBottomOf="@+id/messages_LAY_toolbar"
+            app:layout_constraintEnd_toEndOf="@+id/messages_LAY_toolbar"
+            app:layout_constraintTop_toTopOf="@+id/messages_LAY_toolbar" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textColor="@color/blackColor"
+            app:layout_constraintBottom_toBottomOf="@+id/messages_STC_locationAllow"
+            app:layout_constraintEnd_toEndOf="@+id/messages_STC_locationAllow" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <RelativeLayout
         android:id="@+id/messages_LAY_bottomLayout"
@@ -74,7 +117,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messages_TLB_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/messages_LAY_toolbar"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.okmatka.Activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -9,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -18,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.example.okmatka.Fragments.MatchingUsers_Fragment;
 import com.example.okmatka.Fragments.Profiles_Fragment;
 import com.example.okmatka.MyFireBase;
+import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -49,6 +53,7 @@ public class Activity_Main extends AppCompatActivity {
     private Animation toBTopAnimation;
     private boolean clickable = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +61,10 @@ public class Activity_Main extends AppCompatActivity {
         findViews();
         setAnimations();
         loadFloatBtnPictures();
-        //todo load picture to float button on glide
         setClickersListeners();
         setFireBase();
         setTabs();
+        checkPermissions();
     }
 
     @Override
@@ -72,12 +77,20 @@ public class Activity_Main extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         checkStatus("offline");
+        //todo check if i have more then one listener
+        myUserRef.removeEventListener(myDetailsListener());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        myUserRef.addValueEventListener(myDetailsListener());
     }
 
     private void setTabs() {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFraments(new Profiles_Fragment(),"Profiles");
-        viewPagerAdapter.addFraments(new MatchingUsers_Fragment(),"Matches");
+        viewPagerAdapter.addFragments(new Profiles_Fragment(),"Profiles");
+        viewPagerAdapter.addFragments(new MatchingUsers_Fragment(),"Matches");
 
         //setting the viewPager into the tabLayout
         profiles_VPR_viewPager.setAdapter(viewPagerAdapter);
@@ -119,6 +132,23 @@ public class Activity_Main extends AppCompatActivity {
         DatabaseReference myMatchRef = MyFireBase.getInstance()
                 .getReference(MyFireBase.KEYS.USERS_LIST).child(myMatchUser.getId());
         myMatchRef.child(MyFireBase.KEYS.USER_MATCHES_LIST).child(mySelf.getId()).setValue(mySelf);
+    }
+
+    private void checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+        }
+    }
+
+    //checking if the the user gave permissions
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == 2) {
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                MySignal.getInstance().showToast("Enjoy playing! \nLocation will not be displayed...");
+        }
     }
 
     private void setClickersListeners() {
@@ -241,7 +271,7 @@ public class Activity_Main extends AppCompatActivity {
             return fragments.size();
         }
 
-        public void addFraments(Fragment fragment,String title){
+        public void addFragments(Fragment fragment, String title){
             fragments.add(fragment);
             fragmentTitles.add(title);
         }

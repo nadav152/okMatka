@@ -10,10 +10,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/userMessage"
         android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:text="@string/hello_world"
+        android:textColor="@color/blackColor"
         android:padding="7dp"
         android:background="@drawable/left_messages_background"
-        android:textSize="18sp">
+        android:textSize="18sp"
+        >
 
     </TextView>
 

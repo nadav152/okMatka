@@ -41,6 +41,7 @@ public class MyFireBase {
         String USERS_CHATS = "USERS_CHATS/";
         String USER_LIKES_LIST = "USER_LIKES_LIST/";
         String USER_MATCHES_LIST = "USER_MATCHES_LIST/";
+        String USERS_LOCATIONS = "USERS_LOCATIONS";
         String UPLOADS = "UPLOADS";
         String NAME = "name";
         String ROLL = "roll";
@@ -50,6 +51,7 @@ public class MyFireBase {
         String IMG_URL = "imageURL";
         String RATE = "rate";
         String NUMBER_OF_REVIEWS = "numberOfReviews";
+        String LOCATION = "location";
     }
 
 

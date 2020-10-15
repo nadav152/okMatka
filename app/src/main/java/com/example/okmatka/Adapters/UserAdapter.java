@@ -6,19 +6,20 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.okmatka.Activities.Activity_Messages;
+import com.example.okmatka.Interfaces.RateDialogCallBack;
 import com.example.okmatka.MyFireBase;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
+import com.example.okmatka.RateDialog;
 import com.example.okmatka.User;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +31,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private DatabaseReference usersRef;
     private Context context;
     private ArrayList<User> userList;
+    private String currentHolderRate = "";
+    private User currentUser;
 
     public UserAdapter(Context context, ArrayList<User> userList) {
         this.context = context;
@@ -51,42 +54,56 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
         final User currentUser = userList.get(position);
-        loadUser(holder, currentUser);
+        loadUserFromMatchList(holder, currentUser);
 
 
         //setting holder listeners
         holder.userItem_BTN_chat.setOnClickListener(userItemListener(holder, currentUser));
-        holder.userItem_BTN_sendButton.setOnClickListener(userItemListener(holder, currentUser));
+        holder.userItem_BTN_rate.setOnClickListener(userItemListener(holder, currentUser));
 
     }
 
-    private View.OnClickListener userItemListener(@NonNull final ViewHolder holder, final User currentUser) {
+    private View.OnClickListener userItemListener(@NonNull final ViewHolder holder, final User user) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (view.getTag().equals("imgButton"))
-                    setUserRate(holder, currentUser);
+                if (view.getTag().equals("rate")) {
+                    currentUser = user;
+                    openRateDialog();
+                }
                 else
-                    moveToChatActivity(currentUser);
+                    moveToChatActivity(user);
             }
         };
     }
 
-    private void setUserRate(@NonNull ViewHolder holder, User currentUser) {
-        String userRate = String.valueOf(holder.userItem_EDT_rate.getText());
+    private void openRateDialog() {
+        RateDialog rateDialog = new RateDialog(rateDialogCallBack);
+        rateDialog.show(((AppCompatActivity) context).getSupportFragmentManager(),"Rate");
+    }
+
+    private RateDialogCallBack rateDialogCallBack = new RateDialogCallBack() {
+        @Override
+        public void getRate(String rate) {
+            currentHolderRate = rate;
+            setUserRate(currentHolderRate,currentUser);
+        }
+    };
+
+
+    private void setUserRate(String userRate, User currentUser) {
         if ((!userRate.equals("")) && checkRate(userRate)) {
             int reviewsNumber = getNumOfUserReviews(currentUser);
             //setting rate
             usersRef.child(currentUser.getId())
                     .child(MyFireBase.KEYS.RATE)
-                    .setValue(Double.parseDouble(userRate) / reviewsNumber);
+                    .setValue((Double.parseDouble(userRate) + currentUser.getRate()) / reviewsNumber);
             //setting number of reviews
             usersRef.child(currentUser.getId())
                     .child(MyFireBase.KEYS.NUMBER_OF_REVIEWS).setValue(reviewsNumber);
 
             MySignal.getInstance().showToast("Thanks!");
         }
-        holder.userItem_EDT_rate.setText("");
     }
 
     private boolean checkRate(String rateResult) {
@@ -113,7 +130,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         context.startActivity(intent);
     }
 
-    private void loadUser(@NonNull ViewHolder holder, User currentUser) {
+    private void loadUserFromMatchList(@NonNull ViewHolder holder, User currentUser) {
         //textView
         holder.userItem_LBL_name.setText(currentUser.getName());
 
@@ -143,15 +160,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         private ImageView userItem_IMG_userPic;
         private TextView userItem_LBL_name,userItem_LBL_online;
-        private MaterialButton userItem_BTN_chat;
-        private ImageButton userItem_BTN_sendButton;
-        private EditText userItem_EDT_rate;
+        private MaterialButton userItem_BTN_chat , userItem_BTN_rate;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            userItem_EDT_rate = itemView.findViewById(R.id.userItem_EDT_rate);
+            userItem_BTN_rate = itemView.findViewById(R.id.userItem_BTN_rate);
             userItem_BTN_chat = itemView.findViewById(R.id.userItem_BTN_chat);
-            userItem_BTN_sendButton = itemView.findViewById(R.id.userItem_BTN_sendButton);
             userItem_IMG_userPic = itemView.findViewById(R.id.userItem_IMG_userPic);
             userItem_LBL_name = itemView.findViewById(R.id.userItem_LBL_name);
             userItem_LBL_online = itemView.findViewById(R.id.userItem_LBL_online);

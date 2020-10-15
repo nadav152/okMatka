@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,12 +39,14 @@ public class Activity_Messages extends AppCompatActivity {
     private ImageView messages_IMG_userPic;
     private RecyclerView messages_RCV_recyclerView;
     private EditText messages_EDT_sendMessage;
-    private ImageButton messages_BTN_sendButton;
+    private ImageButton messages_BTN_sendButton,  messages_BTN_mapButton;
+    private SwitchCompat messages_STC_locationAllow;
     private MessageAdapter messageAdapter;
     private ArrayList<ChatMessage> chatsList;
     private FirebaseUser firebaseUser;
     private String userISpeakWithId;
     private DatabaseReference myRef;
+    private User userISpeakWith;
     public static final String USER_ID = "USER_ID";
 
     @Override
@@ -53,7 +57,12 @@ public class Activity_Messages extends AppCompatActivity {
         setFireBase();
         setConversation();
         setRecyclerView();
+        loadImageToButton();
         setButtonListeners();
+    }
+
+    private void loadImageToButton() {
+        Glide.with(this).load(R.drawable.map_icon).into(messages_BTN_mapButton);
     }
 
     private void setFireBase() {
@@ -68,7 +77,12 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void setButtonListeners() {
-        messages_BTN_sendButton.setOnClickListener(new View.OnClickListener() {
+        messages_BTN_sendButton.setOnClickListener(sendMessageListener());
+        messages_BTN_mapButton.setOnClickListener(mapListener());
+    }
+
+    private View.OnClickListener sendMessageListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = String.valueOf(messages_EDT_sendMessage.getText());
@@ -79,7 +93,25 @@ public class Activity_Messages extends AppCompatActivity {
 
                 messages_EDT_sendMessage.setText("");
             }
-        });
+        };
+    }
+
+    private View.OnClickListener mapListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMapActivity();
+            }
+        };
+    }
+
+    private void goToMapActivity() {
+        Intent intent = new Intent(Activity_Messages.this, Activity_Map.class);
+        Gson gson = new Gson();
+        assert userISpeakWith !=null;
+        String myGson = gson.toJson(userISpeakWith);
+        intent.putExtra(Activity_Map.USER,myGson);
+        startActivity(intent);
     }
 
     private void sendMessage(String sender, String receiver, String message) {
@@ -108,7 +140,7 @@ public class Activity_Messages extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //setting the toolBar with user details first
-                User userISpeakWith = snapshot.getValue(User.class);
+                userISpeakWith = snapshot.getValue(User.class);
                 assert userISpeakWith != null;
                 messages_LBL_userName.setText(userISpeakWith.getName());
 
@@ -166,6 +198,8 @@ public class Activity_Messages extends AppCompatActivity {
         messages_RCV_recyclerView = findViewById(R.id.messages_RCV_recyclerView);
         messages_EDT_sendMessage = findViewById(R.id.messages_EDT_sendMessage);
         messages_BTN_sendButton = findViewById(R.id.messages_BTN_sendButton);
+        messages_BTN_mapButton = findViewById(R.id.messages_BTN_mapButton);
+        messages_STC_locationAllow = findViewById(R.id.messages_STC_locationAllow);
     }
 
 

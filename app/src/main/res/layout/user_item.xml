@@ -59,54 +59,25 @@
         app:layout_constraintStart_toEndOf="@+id/userItem_IMG_userPic"
         app:layout_constraintTop_toTopOf="@+id/userItem_IMG_userPic" />
 
-    <RelativeLayout
-        android:id="@+id/userItem_LAY_rateLayout"
-        android:layout_width="130dp"
-        android:layout_height="44dp"
-        android:background="@drawable/circle_useritem_background"
-        android:padding="5dp"
-        app:backgroundTint="@color/fui_transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/userItem_BTN_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:tag="rate"
+        android:text="rate user"
+        android:textColor="@color/blackColor"
+        android:textSize="15sp"
+        app:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/userItem_BTN_chat"
         app:layout_constraintStart_toEndOf="@+id/userItem_BTN_chat"
-        app:layout_constraintTop_toTopOf="@+id/userItem_IMG_userPic">
+        app:layout_constraintTop_toTopOf="@+id/userItem_IMG_userPic"
+        app:layout_constraintVertical_bias="1.0" />
 
-
-        <EditText
-            android:id="@+id/userItem_EDT_rate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:background="@color/fui_transparent"
-            android:hint="@string/rate_your_friend"
-            android:padding="5dp"
-            android:textColorHint="@color/blackColor" />
-
-        <ImageButton
-            android:id="@+id/userItem_BTN_sendButton"
-            android:layout_width="21dp"
-            android:layout_height="31dp"
-            android:tag="imgButton"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/submit">
-
-
-        </ImageButton>
-
-
-    </RelativeLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

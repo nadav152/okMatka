@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:orientation="vertical"
     tools:context=".Fragments.Profiles_Fragment">
@@ -18,7 +19,6 @@
             android:id="@+id/profiles_IMG_character_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/img_messi"
             android:padding="5dp"/>
     </RelativeLayout>
 
@@ -38,6 +38,7 @@
             android:padding="5dp"
             android:text="@string/this_will_be_the_name"
             android:textSize="20sp"
+            android:textColor="@color/blackColor"
             android:textStyle="bold"
             android:layout_marginStart="20sp" />
 
@@ -51,6 +52,7 @@
             android:padding="5dp"
             android:text="@string/this_will_be_the_age"
             android:textSize="20sp"
+            android:textColor="@color/blackColor"
             android:textStyle="bold"
             android:layout_marginStart="20sp" />
 
@@ -64,6 +66,7 @@
             android:padding="5dp"
             android:text="@string/this_will_be_roll"
             android:textStyle="bold"
+            android:textColor="@color/blackColor"
             android:textSize="20sp"
             android:layout_marginStart="20sp" />
 
@@ -77,6 +80,7 @@
             android:padding="5dp"
             android:text="@string/this_will_be_experience"
             android:textStyle="bold"
+            android:textColor="@color/blackColor"
             android:textSize="20sp"
             android:layout_marginStart="20sp" />
 
@@ -90,6 +94,7 @@
             android:padding="5dp"
             android:text="@string/this_will_be_favourite_beach"
             android:textStyle="bold"
+            android:textColor="@color/blackColor"
             android:textSize="20sp"
             android:layout_marginStart="20sp" />
 
@@ -103,6 +108,7 @@
             android:padding="5dp"
             android:text="@string/this_will_be_the_rate"
             android:textStyle="bold"
+            android:textColor="@color/blackColor"
             android:textSize="20sp"
             android:layout_marginStart="20sp" />
 
@@ -126,7 +132,7 @@
             android:padding="10dp"
             android:tag="red"
             android:text="@string/bad_match"
-            android:textStyle="bold"
+            app:backgroundTint="@color/backGroundMainColor"
             android:textColor="@color/redColor"
             android:textSize="15sp" />
 
@@ -143,7 +149,7 @@
             android:padding="10dp"
             android:tag="green"
             android:text="@string/good_match"
-            android:textStyle="bold"
+            app:backgroundTint="@color/backGroundMainColor"
             android:textColor="@color/greenieColor"
             android:textSize="15sp" />
     </RelativeLayout>
