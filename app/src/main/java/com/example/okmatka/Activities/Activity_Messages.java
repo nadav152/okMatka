@@ -47,6 +47,7 @@ public class Activity_Messages extends AppCompatActivity {
     private String userISpeakWithId;
     private DatabaseReference myRef;
     private User userISpeakWith;
+    private boolean isSwitchChecked = false;
     public static final String USER_ID = "USER_ID";
 
     @Override
@@ -106,12 +107,18 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void goToMapActivity() {
+        checkSwitchValue();
         Intent intent = new Intent(Activity_Messages.this, Activity_Map.class);
         Gson gson = new Gson();
         assert userISpeakWith !=null;
         String myGson = gson.toJson(userISpeakWith);
+        intent.putExtra(Activity_Map.SHOW_LOCATION,isSwitchChecked);
         intent.putExtra(Activity_Map.USER,myGson);
         startActivity(intent);
+    }
+
+    private void checkSwitchValue() {
+        isSwitchChecked = messages_STC_locationAllow.isChecked();
     }
 
     private void sendMessage(String sender, String receiver, String message) {

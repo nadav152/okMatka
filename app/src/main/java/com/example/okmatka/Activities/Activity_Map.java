@@ -12,10 +12,11 @@ import com.google.gson.Gson;
 
 public class Activity_Map extends AppCompatActivity {
 
-    private String userISpeakWithId;
     private Map_Fragment map_fragment;
     private User user;
+    private boolean isChecked;
     public static final String USER = "USER";
+    public static final String SHOW_LOCATION = "SHOW_LOCATION";
 
 
     @Override
@@ -29,10 +30,11 @@ public class Activity_Map extends AppCompatActivity {
     private void getMyIntent() {
         Gson gson = new Gson();
         user =  gson.fromJson(getIntent().getStringExtra(USER), User.class);
+        isChecked = getIntent().getBooleanExtra(SHOW_LOCATION,false);
     }
 
     private void initFragment() {
-        map_fragment = new Map_Fragment(user);
+        map_fragment = new Map_Fragment(user,isChecked);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.map_LAY_map, map_fragment);
         transaction.commit();

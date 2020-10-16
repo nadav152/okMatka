@@ -20,6 +20,7 @@ import com.example.okmatka.MyFireBase;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
+import com.example.okmatka.UserLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,23 +43,24 @@ public class Map_Fragment extends Fragment {
 
     private MapView mapView;
     private Handler handler = new Handler();
-    private final int DELAY = 5000;
+    private final int DELAY = 1000;
     private String userISpeakWithId;
     private User userISpeakWith;
     private FirebaseUser firebaseUser;
     private DatabaseReference usersLocationRef;
     private LatLng currentUserPos;
-    private LatLng myPos;
     private Bitmap bitmap;
+    private boolean isChecked;
     private double lat = 0.0;
     private double lon = 0.0;
 
     public Map_Fragment() {
     }
 
-    public Map_Fragment(User user) {
+    public Map_Fragment(User user, boolean checked) {
         this.userISpeakWithId = user.getId();
         this.userISpeakWith = user;
+        this.isChecked = checked;
     }
 
     @Override
@@ -76,7 +78,7 @@ public class Map_Fragment extends Fragment {
         initLPosition();
         setBitMap();
         setFireBaseListener();
-        setMarkerOnLocation();
+//        setMarkerOnLocation();
         return v;
     }
 
@@ -105,11 +107,15 @@ public class Map_Fragment extends Fragment {
         usersLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(userISpeakWithId)) {
-                    LatLng userLocation = snapshot.child(userISpeakWithId).getValue(LatLng.class);
-                    if(userLocation != null)
-                        currentUserPos = userLocation;
-                    setMarkerOnLocation();
+                if (snapshot.hasChild(firebaseUser.getUid())) {
+                    //user saved his location on my id - gave me his location
+                    UserLocation location = snapshot.child(firebaseUser.getUid()).getValue(UserLocation.class);
+                    assert location != null;
+                    if (location.isSendHisLocation()) {
+                        currentUserPos = new LatLng(location.getLatitude(), location.getLongitude());
+                        setMarkerOnLocation();
+                    } else
+                        MySignal.getInstance().showToast("Your match switch his location off");
                 }
             }
 
@@ -120,7 +126,15 @@ public class Map_Fragment extends Fragment {
         });
     }
 
-    private void setMyLocation() {
+    private Runnable updateMyLocation = new Runnable() {
+        @Override
+        public void run() {
+            sendMyLocationToMyMatch(userISpeakWithId);
+            handler.postDelayed(this, DELAY);
+        }
+    };
+
+    private void sendMyLocationToMyMatch(final String userISpeakWithId) {
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity().getApplicationContext());
         //checking permission
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -133,8 +147,8 @@ public class Map_Fragment extends Fragment {
                         double currentLat = location.getLatitude();
                         double currentLon = location.getLongitude();
                         if (isLocationChange(currentLat,lat,currentLon,lon)) {
-                            myPos = new LatLng(currentLat, currentLon);
-                            usersLocationRef.child(firebaseUser.getUid()).setValue(myPos);
+                            UserLocation myLocation = new UserLocation(currentLat, currentLon,true);
+                            usersLocationRef.child(userISpeakWithId).setValue(myLocation);
                             lat = currentLat;
                             lon = currentLon;
                         }
@@ -146,10 +160,10 @@ public class Map_Fragment extends Fragment {
     }
 
     private boolean isLocationChange(double myLat, double lat, double myLon, double lon) {
-        myLat = Math.floor(myLat * 100) / 100;
-        lat = Math.floor(lat * 100) / 100;
-        myLon = Math.floor(myLon * 100) / 100;
-        lon = Math.floor(lon * 100) / 100;
+        myLat = Math.floor(myLat * 100000) / 100000;
+        lat = Math.floor(lat * 100000) / 100000;
+        myLon = Math.floor(myLon * 100000) / 100000;
+        lon = Math.floor(lon * 100000) / 100000;
 
         return myLat != lat && myLon != lon;
     }
@@ -158,14 +172,6 @@ public class Map_Fragment extends Fragment {
     public void setMarkerOnLocation() {
         mapView.getMapAsync(mapReadyCallback);
     }
-
-    private Runnable updateMyLocation = new Runnable() {
-        @Override
-        public void run() {
-            setMyLocation();
-            handler.postDelayed(this, DELAY);
-        }
-    };
 
     private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
@@ -188,7 +194,7 @@ public class Map_Fragment extends Fragment {
 
             //todo change to zoom on my location
             // Animating to the touched position
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(13).build();
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(18).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             // Placing a marker on the touched position
@@ -212,7 +218,12 @@ public class Map_Fragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        handler.postDelayed(updateMyLocation, DELAY);
+        if (isChecked)
+            handler.postDelayed(updateMyLocation, DELAY);
+        else {
+            UserLocation falseLocation = new UserLocation(0, 0,false);
+            usersLocationRef.child(userISpeakWithId).setValue(falseLocation);
+        }
     }
 
     @Override
