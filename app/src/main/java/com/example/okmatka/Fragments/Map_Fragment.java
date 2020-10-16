@@ -50,6 +50,7 @@ public class Map_Fragment extends Fragment {
     private DatabaseReference usersLocationRef;
     private LatLng currentUserPos;
     private Bitmap bitmap;
+    private String userSrc = "default";
     private boolean isChecked;
     private double lat = 0.0;
     private double lon = 0.0;
@@ -82,27 +83,6 @@ public class Map_Fragment extends Fragment {
         return v;
     }
 
-    private void setBitMap(){
-
-        if (!userISpeakWith.getImageURL().equals("default")) {
-            getBitmapFromURL(userISpeakWith.getImageURL());
-        }
-    }
-
-    public  void getBitmapFromURL(final String src){
-        //todo add image to marker
-    }
-
-    private void initFireBase() {
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        usersLocationRef = MyFireBase.getInstance().
-                getReference(MyFireBase.KEYS.USERS_LOCATIONS);
-    }
-
-    private void initLPosition() {
-        currentUserPos = new LatLng(32.079994 ,34.767316);
-    }
-
     private void setFireBaseListener() {
         usersLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -124,6 +104,54 @@ public class Map_Fragment extends Fragment {
 
             }
         });
+    }
+
+    //this method sets the map new marker location
+    public void setMarkerOnLocation() {
+        mapView.getMapAsync(mapReadyCallback);
+    }
+
+    private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            // Clears the previously touched position
+            googleMap.clear();
+            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            googleMap.setMyLocationEnabled(true);
+
+            //todo change to zoom on my location
+            // Animating to the touched position
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(18).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            // Placing a marker on the touched position
+            placeMarker(googleMap);
+        }
+    };
+
+    private void placeMarker(GoogleMap googleMap) {
+        MarkerOptions marker;
+        if (bitmap!=null) {
+            Log.d("ppp","bitmap is not null");
+            marker = new MarkerOptions()
+                    .position(currentUserPos)
+                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        }else
+            Log.d("ppp","bitmap is null");
+        marker = new MarkerOptions()
+                .position(currentUserPos);
+        googleMap.addMarker(marker);
     }
 
     private Runnable updateMyLocation = new Runnable() {
@@ -168,53 +196,6 @@ public class Map_Fragment extends Fragment {
         return myLat != lat && myLon != lon;
     }
 
-    //this method sets the map new marker location
-    public void setMarkerOnLocation() {
-        mapView.getMapAsync(mapReadyCallback);
-    }
-
-    private OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            // Clears the previously touched position
-            googleMap.clear();
-            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            googleMap.setMyLocationEnabled(true);
-
-            //todo change to zoom on my location
-            // Animating to the touched position
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(18).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-            // Placing a marker on the touched position
-            placeMarker(googleMap);
-        }
-    };
-
-    private void placeMarker(GoogleMap googleMap) {
-        MarkerOptions marker;
-        if (bitmap!=null) {
-             marker = new MarkerOptions()
-                    .position(currentUserPos)
-                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-        }else
-            Log.d("ppp","bitmap is null");
-            marker = new MarkerOptions()
-                    .position(currentUserPos);
-        googleMap.addMarker(marker);
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -251,4 +232,22 @@ public class Map_Fragment extends Fragment {
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
+    private void initFireBase() {
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        usersLocationRef = MyFireBase.getInstance().
+                getReference(MyFireBase.KEYS.USERS_LOCATIONS);
+    }
+
+    private void initLPosition() {
+        currentUserPos = new LatLng(32.079994 ,34.767316);
+    }
+
+    private void setBitMap(){
+        if (!userISpeakWith.getImageURL().equals("default")) {
+            userSrc = userISpeakWith.getImageURL();
+
+        }
+    }
+
 }

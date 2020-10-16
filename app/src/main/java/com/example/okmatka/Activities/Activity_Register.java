@@ -143,7 +143,6 @@ public class Activity_Register extends AppCompatActivity {
         register_IMG_appLogo = findViewById(R.id.register_IMG_appLogo);
 
     }
-    // todo change to roll select to spinner button  -> https://www.youtube.com/watch?v=on_OrrX7Nw4
 
     private boolean isValidEmail(String email) {
 
