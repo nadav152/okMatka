@@ -52,6 +52,7 @@ public class MyFireBase {
         String RATE = "rate";
         String NUMBER_OF_REVIEWS = "numberOfReviews";
         String LOCATION = "location";
+        String KEY = "KEY";
     }
 
 

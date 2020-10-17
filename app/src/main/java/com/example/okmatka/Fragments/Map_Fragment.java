@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -136,15 +134,12 @@ public class Map_Fragment extends Fragment {
     };
 
     private void placeMarker(GoogleMap googleMap) {
-        MarkerOptions marker;
-        if (bitmap!=null) {
-            Log.d("ppp","bitmap is not null");
-            marker = new MarkerOptions()
-                    .position(currentUserPos)
-                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-        }else
-            Log.d("ppp","bitmap is null");
-        marker = new MarkerOptions()
+//        MarkerOptions marker = new MarkerOptions()
+//                    .position(currentUserPos)
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.general_user));
+
+
+        MarkerOptions marker = new MarkerOptions()
                 .position(currentUserPos);
         googleMap.addMarker(marker);
     }

@@ -52,7 +52,7 @@ public class Activity_Messages extends AppCompatActivity {
     private String userISpeakWithId;
     private DatabaseReference myRef;
     private User userISpeakWith;
-    private String matchMapIdRefKey;
+    private String matchMapIdRefKey= "";
     public static final String USER_ID = "USER_ID";
 
     @Override
@@ -65,6 +65,17 @@ public class Activity_Messages extends AppCompatActivity {
         setRecyclerView();
         loadImageToButton();
         setButtonListeners();
+    }
+
+    @Override
+    protected void onStop() {
+        //to prevent storing a not needed data
+        removeLocations();
+        super.onStop();
+    }
+
+    private void removeLocations() {
+        myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
     }
 
     private void loadImageToButton() {
@@ -102,12 +113,15 @@ public class Activity_Messages extends AppCompatActivity {
         @Override
         public void getAnswer(Boolean invite) {
             if (invite) {
+                if (!matchMapIdRefKey.equals(""))
+                    myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
                 String uniqueNumber = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
                 String invitationMessage = "I made a shared location map for us," +
                         " if you wish to enter press the map icon and the key will be :\n" +
                         uniqueNumber;
                 sendMessage(firebaseUser.getUid(),userISpeakWithId,invitationMessage);
                 matchMapIdRefKey = uniqueNumber;
+                myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).setValue("room has opened");
             }
         }
     };
@@ -141,13 +155,24 @@ public class Activity_Messages extends AppCompatActivity {
         keyDialog.show(this.getSupportFragmentManager(),"key");
     }
 
+    //checking if the dialog key matches the new map room
     private KeyDialogCallBack keyDialogCallBack = new KeyDialogCallBack() {
         @Override
-        public void getKey(String key) {
-            if (key.equals(matchMapIdRefKey))
-                goToMapActivity(matchMapIdRefKey);
-            else
-                MySignal.getInstance().showToast("Wrong Key");
+        public void getKey(final String key) {
+            myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.hasChild(key))
+                        goToMapActivity(matchMapIdRefKey);
+                    else
+                        MySignal.getInstance().showToast("Wrong Key");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     };
 
