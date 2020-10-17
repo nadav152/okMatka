@@ -166,7 +166,7 @@ public class Activity_Messages extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.hasChild(key))
-                        goToMapActivity(matchMapIdRefKey);
+                        goToMapActivity(key);
                     else
                         MySignal.getInstance().showToast("This key is wrong\n or no longer valid");
                 }
