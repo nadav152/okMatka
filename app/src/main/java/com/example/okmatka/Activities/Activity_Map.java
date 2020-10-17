@@ -14,9 +14,9 @@ public class Activity_Map extends AppCompatActivity {
 
     private Map_Fragment map_fragment;
     private User user;
-    private boolean isChecked;
+    private String usersLocationRef;
     public static final String USER = "USER";
-    public static final String SHOW_LOCATION = "SHOW_LOCATION";
+    public static final String KEY_REF = "KEY_REF";
 
 
     @Override
@@ -30,11 +30,11 @@ public class Activity_Map extends AppCompatActivity {
     private void getMyIntent() {
         Gson gson = new Gson();
         user =  gson.fromJson(getIntent().getStringExtra(USER), User.class);
-        isChecked = getIntent().getBooleanExtra(SHOW_LOCATION,false);
+        usersLocationRef = getIntent().getStringExtra(KEY_REF);
     }
 
     private void initFragment() {
-        map_fragment = new Map_Fragment(user,isChecked);
+        map_fragment = new Map_Fragment(user,usersLocationRef);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.map_LAY_map, map_fragment);
         transaction.commit();

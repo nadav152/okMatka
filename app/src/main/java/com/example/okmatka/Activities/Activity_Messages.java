@@ -10,17 +10,21 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.okmatka.Adapters.MessageAdapter;
 import com.example.okmatka.ChatMessage;
+import com.example.okmatka.Interfaces.InviteDialogCallback;
+import com.example.okmatka.Interfaces.KeyDialogCallBack;
+import com.example.okmatka.InviteDialog;
+import com.example.okmatka.KeyDialog;
 import com.example.okmatka.MyFireBase;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,14 +45,14 @@ public class Activity_Messages extends AppCompatActivity {
     private RecyclerView messages_RCV_recyclerView;
     private EditText messages_EDT_sendMessage;
     private ImageButton messages_BTN_sendButton,  messages_BTN_mapButton;
-    private SwitchCompat messages_STC_locationAllow;
+    private MaterialButton messages_BTN_inviteButton;
     private MessageAdapter messageAdapter;
     private ArrayList<ChatMessage> chatsList;
     private FirebaseUser firebaseUser;
     private String userISpeakWithId;
     private DatabaseReference myRef;
     private User userISpeakWith;
-    private boolean isSwitchChecked = false;
+    private String matchMapIdRefKey;
     public static final String USER_ID = "USER_ID";
 
     @Override
@@ -80,7 +85,32 @@ public class Activity_Messages extends AppCompatActivity {
     private void setButtonListeners() {
         messages_BTN_sendButton.setOnClickListener(sendMessageListener());
         messages_BTN_mapButton.setOnClickListener(mapListener());
+        messages_BTN_inviteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openInvitationDialog();
+            }
+        });
     }
+
+    private void openInvitationDialog() {
+        InviteDialog inviteDialog = new InviteDialog(inviteDialogCallback);
+        inviteDialog.show(this.getSupportFragmentManager(),"Invitation");
+    }
+
+    private InviteDialogCallback inviteDialogCallback = new InviteDialogCallback() {
+        @Override
+        public void getAnswer(Boolean invite) {
+            if (invite) {
+                String uniqueNumber = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+                String invitationMessage = "I made a shared location map for us," +
+                        " if you wish to enter press the map icon and the key will be :\n" +
+                        uniqueNumber;
+                sendMessage(firebaseUser.getUid(),userISpeakWithId,invitationMessage);
+                matchMapIdRefKey = uniqueNumber;
+            }
+        }
+    };
 
     private View.OnClickListener sendMessageListener() {
         return new View.OnClickListener() {
@@ -101,24 +131,35 @@ public class Activity_Messages extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToMapActivity();
+                checkKeyDialog();
             }
         };
     }
 
-    private void goToMapActivity() {
-        checkSwitchValue();
+    private void checkKeyDialog() {
+        KeyDialog keyDialog = new KeyDialog(keyDialogCallBack);
+        keyDialog.show(this.getSupportFragmentManager(),"key");
+    }
+
+    private KeyDialogCallBack keyDialogCallBack = new KeyDialogCallBack() {
+        @Override
+        public void getKey(String key) {
+            if (key.equals(matchMapIdRefKey))
+                goToMapActivity(matchMapIdRefKey);
+            else
+                MySignal.getInstance().showToast("Wrong Key");
+        }
+    };
+
+
+    private void goToMapActivity(String keyRef) {
         Intent intent = new Intent(Activity_Messages.this, Activity_Map.class);
         Gson gson = new Gson();
         assert userISpeakWith !=null;
+        intent.putExtra(Activity_Map.KEY_REF,keyRef);
         String myGson = gson.toJson(userISpeakWith);
-        intent.putExtra(Activity_Map.SHOW_LOCATION,isSwitchChecked);
         intent.putExtra(Activity_Map.USER,myGson);
         startActivity(intent);
-    }
-
-    private void checkSwitchValue() {
-        isSwitchChecked = messages_STC_locationAllow.isChecked();
     }
 
     private void sendMessage(String sender, String receiver, String message) {
@@ -206,7 +247,7 @@ public class Activity_Messages extends AppCompatActivity {
         messages_EDT_sendMessage = findViewById(R.id.messages_EDT_sendMessage);
         messages_BTN_sendButton = findViewById(R.id.messages_BTN_sendButton);
         messages_BTN_mapButton = findViewById(R.id.messages_BTN_mapButton);
-        messages_STC_locationAllow = findViewById(R.id.messages_STC_locationAllow);
+        messages_BTN_inviteButton = findViewById(R.id.messages_BTN_inviteButton);
     }
 
 

@@ -23,12 +23,10 @@ import com.example.okmatka.User;
 import com.example.okmatka.UserLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,17 +49,17 @@ public class Map_Fragment extends Fragment {
     private LatLng currentUserPos;
     private Bitmap bitmap;
     private String userSrc = "default";
-    private boolean isChecked;
+    private String matchRef;
     private double lat = 0.0;
     private double lon = 0.0;
 
     public Map_Fragment() {
     }
 
-    public Map_Fragment(User user, boolean checked) {
+    public Map_Fragment(User user, String matchRef) {
         this.userISpeakWithId = user.getId();
         this.userISpeakWith = user;
-        this.isChecked = checked;
+        this.matchRef = matchRef;
     }
 
     @Override
@@ -87,15 +85,12 @@ public class Map_Fragment extends Fragment {
         usersLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(firebaseUser.getUid())) {
-                    //user saved his location on my id - gave me his location
-                    UserLocation location = snapshot.child(firebaseUser.getUid()).getValue(UserLocation.class);
+                if (snapshot.hasChild(userISpeakWithId)) {
+                    //user gave me his location to the location room
+                    UserLocation location = snapshot.child(userISpeakWithId).getValue(UserLocation.class);
                     assert location != null;
-                    if (location.isSendHisLocation()) {
-                        currentUserPos = new LatLng(location.getLatitude(), location.getLongitude());
-                        setMarkerOnLocation();
-                    } else
-                        MySignal.getInstance().showToast("Your match switch his location off");
+                    currentUserPos = new LatLng(location.getLatitude(), location.getLongitude());
+                    setMarkerOnLocation();
                 }
             }
 
@@ -132,8 +127,8 @@ public class Map_Fragment extends Fragment {
 
             //todo change to zoom on my location
             // Animating to the touched position
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(18).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(18).build();
+//            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             // Placing a marker on the touched position
             placeMarker(googleMap);
@@ -157,12 +152,12 @@ public class Map_Fragment extends Fragment {
     private Runnable updateMyLocation = new Runnable() {
         @Override
         public void run() {
-            sendMyLocationToMyMatch(userISpeakWithId);
+            updateMyLocation();
             handler.postDelayed(this, DELAY);
         }
     };
 
-    private void sendMyLocationToMyMatch(final String userISpeakWithId) {
+    private void updateMyLocation() {
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity().getApplicationContext());
         //checking permission
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -176,7 +171,7 @@ public class Map_Fragment extends Fragment {
                         double currentLon = location.getLongitude();
                         if (isLocationChange(currentLat,lat,currentLon,lon)) {
                             UserLocation myLocation = new UserLocation(currentLat, currentLon,true);
-                            usersLocationRef.child(userISpeakWithId).setValue(myLocation);
+                            usersLocationRef.child(firebaseUser.getUid()).setValue(myLocation);
                             lat = currentLat;
                             lon = currentLon;
                         }
@@ -199,12 +194,7 @@ public class Map_Fragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (isChecked)
-            handler.postDelayed(updateMyLocation, DELAY);
-        else {
-            UserLocation falseLocation = new UserLocation(0, 0,false);
-            usersLocationRef.child(userISpeakWithId).setValue(falseLocation);
-        }
+        handler.postDelayed(updateMyLocation, DELAY);
     }
 
     @Override
@@ -236,7 +226,7 @@ public class Map_Fragment extends Fragment {
     private void initFireBase() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         usersLocationRef = MyFireBase.getInstance().
-                getReference(MyFireBase.KEYS.USERS_LOCATIONS);
+                getReference(MyFireBase.KEYS.USERS_LOCATIONS).child(matchRef);
     }
 
     private void initLPosition() {

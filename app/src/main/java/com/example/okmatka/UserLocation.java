@@ -4,7 +4,6 @@ public class UserLocation {
 
     private double latitude;
     private double longitude;
-    private boolean sendMyLocation;
 
     public UserLocation() {
     }
@@ -12,7 +11,6 @@ public class UserLocation {
     public UserLocation(double latitude, double longitude,boolean showLocation) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.sendMyLocation = showLocation;
     }
 
     public double getLatitude() {
@@ -31,11 +29,4 @@ public class UserLocation {
         this.longitude = longitude;
     }
 
-    public boolean isSendHisLocation() {
-        return sendMyLocation;
-    }
-
-    public void setSendMyLocation(boolean sendMyLocation) {
-        this.sendMyLocation = sendMyLocation;
-    }
 }

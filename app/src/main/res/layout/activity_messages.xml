@@ -48,30 +48,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:backgroundTint="@color/fui_transparent"
+            android:layout_marginLeft="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/messages_STC_locationAllow"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-           />
+            app:layout_constraintStart_toEndOf="@+id/messages_LBL_userName"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/messages_STC_locationAllow"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/messages_BTN_inviteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:layout_marginRight="30dp"
-            app:layout_constraintBottom_toBottomOf="@+id/messages_LAY_toolbar"
-            app:layout_constraintEnd_toEndOf="@+id/messages_LAY_toolbar"
-            app:layout_constraintTop_toTopOf="@+id/messages_LAY_toolbar" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Location"
+            android:text="invite to map"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/blackColor"
-            app:layout_constraintBottom_toBottomOf="@+id/messages_STC_locationAllow"
-            app:layout_constraintEnd_toEndOf="@+id/messages_STC_locationAllow" />
+            app:backgroundTint="@color/backGroundMainColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/messages_BTN_mapButton"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
