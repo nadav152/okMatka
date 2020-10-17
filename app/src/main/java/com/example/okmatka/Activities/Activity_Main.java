@@ -64,7 +64,12 @@ public class Activity_Main extends AppCompatActivity {
         setClickersListeners();
         setFireBase();
         setTabs();
-        checkPermissions();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkLocationPermissions();
     }
 
     @Override
@@ -134,7 +139,7 @@ public class Activity_Main extends AppCompatActivity {
         myMatchRef.child(MyFireBase.KEYS.USER_MATCHES_LIST).child(mySelf.getId()).setValue(mySelf);
     }
 
-    private void checkPermissions() {
+    private void checkLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -147,7 +152,7 @@ public class Activity_Main extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == 2) {
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED)
-                MySignal.getInstance().showToast("Enjoy playing! \nLocation will not be displayed...");
+                MySignal.getInstance().showToast("Some functions may not work..");
         }
     }
 

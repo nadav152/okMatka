@@ -36,7 +36,7 @@ public class KeyDialog extends AppCompatDialogFragment {
         View view  = inflater.inflate(R.layout.key_dialog,null);
 
         builder.setView(view)
-                .setTitle("Key Dialog")
+                .setTitle("Key Verification")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) { }

@@ -113,8 +113,11 @@ public class Activity_Messages extends AppCompatActivity {
         @Override
         public void getAnswer(Boolean invite) {
             if (invite) {
+                //checking if there is already room ready
                 if (!matchMapIdRefKey.equals(""))
                     myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
+
+                //preparing new room
                 String uniqueNumber = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
                 String invitationMessage = "I made a shared location map for us," +
                         " if you wish to enter press the map icon and the key will be :\n" +

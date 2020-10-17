@@ -36,7 +36,7 @@ public class RateDialog extends AppCompatDialogFragment {
         View view  = inflater.inflate(R.layout.rate_dialog,null);
 
         builder.setView(view)
-                .setTitle("Rate Dialog")
+                .setTitle("Rate Feedback")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) { }
