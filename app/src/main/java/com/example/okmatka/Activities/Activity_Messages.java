@@ -75,7 +75,8 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void removeLocations() {
-        myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
+        if (!matchMapIdRefKey.equals("def"))
+            myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
     }
 
     private void loadImageToButton() {

@@ -111,7 +111,7 @@ public class Activity_Settings extends AppCompatActivity {
     }
 
     private void updateMyRate(User user) {
-        String myRate = "Your Rate : " + user.getRate();
+        String myRate = "Your Rate : " + user.getRate() / user.getNumberOfReviews();
         setting_EDT_rate.setText(myRate);
     }
 

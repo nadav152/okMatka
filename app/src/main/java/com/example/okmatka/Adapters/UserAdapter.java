@@ -21,8 +21,13 @@ import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.RateDialog;
 import com.example.okmatka.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -91,20 +96,70 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     };
 
 
-    private void setUserRate(String userRate, User currentUser) {
+    private void setUserRate(String userRate, User user) {
         if ((!userRate.equals("")) && checkRate(userRate)) {
-            int reviewsNumber = getNumOfUserReviews(currentUser);
-            //setting rate
-            usersRef.child(currentUser.getId())
+            int reviewsNumber = user.getNumberOfReviews() + 1;
+            double newTotalRate = Double.parseDouble(userRate) + user.getRate();
+
+            //updating the new rate
+            usersRef.child(user.getId())
                     .child(MyFireBase.KEYS.RATE)
-                    .setValue((Double.parseDouble(userRate) + currentUser.getRate()) / reviewsNumber);
-            //setting number of reviews
-            usersRef.child(currentUser.getId())
-                    .child(MyFireBase.KEYS.NUMBER_OF_REVIEWS).setValue(reviewsNumber);
+                    .setValue(newTotalRate).
+                    addOnCompleteListener(rateUpdateCompleteListener(user,reviewsNumber));
 
             MySignal.getInstance().showToast("Thanks!");
         }
     }
+
+    private OnCompleteListener<Void> rateUpdateCompleteListener(final User user, final double reviews) {
+        return new OnCompleteListener<Void>() {
+    @Override
+    public void onComplete(@NonNull Task<Void> task) {
+        ////updating the new number of reviews
+            usersRef.child(user.getId())
+                .child(MyFireBase.KEYS.NUMBER_OF_REVIEWS)
+                .setValue(reviews).addOnCompleteListener(reviewsUpdateCompleterListener(user));
+            }
+        };
+    }
+
+    private OnCompleteListener<Void> reviewsUpdateCompleterListener(final User user) {
+        return new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                usersRef.child(user.getId()).addListenerForSingleValueEvent(notifyUserMatchesListener());
+            }
+        };
+    }
+
+    private ValueEventListener notifyUserMatchesListener() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User updatedUser = snapshot.getValue(User.class);
+                assert updatedUser != null;
+
+                //notifying the user's matches on the new rate
+                for(DataSnapshot userMatch : snapshot.child(MyFireBase.KEYS.USER_MATCHES_LIST).getChildren()) {
+                    User myMatchUser = userMatch.getValue(User.class);
+                    assert myMatchUser != null;
+                    updateMatches(myMatchUser,updatedUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+    }
+
+    private void updateMatches(User myMatchUser, User mySelf) {
+        DatabaseReference myMatchRef = MyFireBase.getInstance()
+                .getReference(MyFireBase.KEYS.USERS_LIST).child(myMatchUser.getId());
+        myMatchRef.child(MyFireBase.KEYS.USER_MATCHES_LIST).child(mySelf.getId()).setValue(mySelf);
+    }
+
 
     private boolean checkRate(String rateResult) {
         if(android.text.TextUtils.isDigitsOnly(rateResult)){
@@ -117,11 +172,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
         MySignal.getInstance().showToast("Rate must be a number");
         return false;
-    }
-
-    private int getNumOfUserReviews(User currentUser) {
-        currentUser.setNumberOfReviews(currentUser.getNumberOfReviews()+1);
-        return currentUser.getNumberOfReviews();
     }
 
     private void moveToChatActivity(User currentUser) {

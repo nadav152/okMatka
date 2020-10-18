@@ -202,7 +202,7 @@ public class Profiles_Fragment extends Fragment {
         setValue(profiles_LBL_roll,"Roll : " + currentUser.getRoll());
         setValue(profiles_LBL_experience,"Experience : " + currentUser.getExperience());
         setValue(profiles_LBL_favourite_beach, "Favourite Beach : " + currentUser.getFavouriteBeach());
-        setValue(profiles_LBL_rate,"Rate : " + currentUser.getRate());
+        setValue(profiles_LBL_rate,"Rate : " + currentUser.getRate() / currentUser.getNumberOfReviews());
     }
 
     private void setValue(TextView textView, String name) {

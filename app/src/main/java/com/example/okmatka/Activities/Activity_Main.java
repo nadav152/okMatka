@@ -83,13 +83,6 @@ public class Activity_Main extends AppCompatActivity {
         super.onPause();
         //todo check if i have more then one listener
         checkStatus("offline");
-        myUserRef.removeEventListener(myDetailsListener());
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        myUserRef.addValueEventListener(myDetailsListener());
     }
 
     private void setTabs() {
