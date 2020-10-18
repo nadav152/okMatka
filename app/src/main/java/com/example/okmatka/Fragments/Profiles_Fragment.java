@@ -56,7 +56,6 @@ public class Profiles_Fragment extends Fragment {
         initFireBase();
         readData(getFireBaseCallBack());
         setClickers();
-        Log.d("showtag","got here");
         return view;
     }
 
@@ -85,7 +84,7 @@ public class Profiles_Fragment extends Fragment {
 
 
     private void checkMatchWithUser(final User displayedUser) {
-
+        Log.d("ppp","user name is " + displayedUser.getName());
         if (!displayedUser.getName().equals("NaN")) {
             DatabaseReference displayedUserLikeList = appUsersRef.child(displayedUser.getId())
                     .child(MyFireBase.KEYS.USER_LIKES_LIST);
@@ -152,6 +151,7 @@ public class Profiles_Fragment extends Fragment {
                         if (!currentUser.getId().equals(firebaseUser.getUid()))
                             appUserslist.add(currentUser);
                     }
+                    notDisplayedUsers = 0;
                     index = appUserslist.size();
                     fireBaseCallBack.onCallBack(appUserslist);
                 }
@@ -196,7 +196,7 @@ public class Profiles_Fragment extends Fragment {
 
     private void checkIfNoMoreUsers() {
         notDisplayedUsers+=1;
-        if (!(notDisplayedUsers == appUserslist.size()))
+        if (!(notDisplayedUsers >= appUserslist.size()))
             showNextUser();
         else {
             User seenAllUsers = new User("", "", "NaN");
