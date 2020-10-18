@@ -1,7 +1,6 @@
 package com.example.okmatka.Fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +83,6 @@ public class Profiles_Fragment extends Fragment {
 
 
     private void checkMatchWithUser(final User displayedUser) {
-        Log.d("ppp","user name is " + displayedUser.getName());
         if (!displayedUser.getName().equals("NaN")) {
             DatabaseReference displayedUserLikeList = appUsersRef.child(displayedUser.getId())
                     .child(MyFireBase.KEYS.USER_LIKES_LIST);
@@ -157,9 +155,7 @@ public class Profiles_Fragment extends Fragment {
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
+                public void onCancelled(@NonNull DatabaseError error) { }
             };
     }
 
@@ -181,22 +177,17 @@ public class Profiles_Fragment extends Fragment {
                         !snapshot.child(MyFireBase.KEYS.USER_LIKES_LIST).hasChild(currentlyDisplayedUser.getId())){
                     displayUser(currentlyDisplayedUser);
                     notDisplayedUsers = 0;
-                } else {
+                } else
                     checkIfNoMoreUsers();
-                }
-
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 
     private void checkIfNoMoreUsers() {
         notDisplayedUsers+=1;
-        if (!(notDisplayedUsers >= appUserslist.size()))
+        if (notDisplayedUsers <= appUserslist.size())
             showNextUser();
         else {
             User seenAllUsers = new User("", "", "NaN");
