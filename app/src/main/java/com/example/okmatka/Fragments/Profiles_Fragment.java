@@ -1,6 +1,7 @@
 package com.example.okmatka.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,8 @@ public class Profiles_Fragment extends Fragment {
     private FirebaseUser firebaseUser;
     private ArrayList<User> appUserslist;
     private User displayedUser;
-    private Boolean alreadyMatched = false;
     private int index = -1;
+    private int notDisplayedUsers = 0;
 
     public Profiles_Fragment() {
 
@@ -55,6 +56,7 @@ public class Profiles_Fragment extends Fragment {
         initFireBase();
         readData(getFireBaseCallBack());
         setClickers();
+        Log.d("showtag","got here");
         return view;
     }
 
@@ -63,37 +65,42 @@ public class Profiles_Fragment extends Fragment {
             @Override
             public void onCallBack(List<User> list) {
                 if(getActivity()!=null)
-                    setNextUser();
+                    showNextUser();
             }
         };
     }
 
-
-    private View.OnClickListener buttonClickListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (index != -1){
-                    if (((String) view.getTag()).equals("red")) {
-                        setNextUser();
-                    } else
-                        checkMatchWithUser(displayedUser);
+    private View.OnClickListener buttonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (index != -1) {
+                if (view.getTag().equals("red")) {
+                    showNextUser();
+                } else {
+                    checkMatchWithUser(displayedUser);
                 }
             }
-        };
-    }
+        }
+    };
+
 
     private void checkMatchWithUser(final User displayedUser) {
-        final DatabaseReference displayedUserLikeList = appUsersRef.child(displayedUser.getId())
-                .child(MyFireBase.KEYS.USER_LIKES_LIST);
-        displayedUserLikeList.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        if (!displayedUser.getName().equals("NaN")) {
+            DatabaseReference displayedUserLikeList = appUsersRef.child(displayedUser.getId())
+                    .child(MyFireBase.KEYS.USER_LIKES_LIST);
+            displayedUserLikeList.addListenerForSingleValueEvent(maybeMatchListener(displayedUser, displayedUserLikeList));
+        }
+    }
+
+    private ValueEventListener maybeMatchListener(final User displayedUser, final DatabaseReference displayedUserLikeList) {
+        return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(firebaseUser.getUid())){
+                if (snapshot.hasChild(firebaseUser.getUid())) {
                     MySignal.getInstance().showToast("You have a new match with " + displayedUser.getName() + "!");
                     User myself = snapshot.child(firebaseUser.getUid()).getValue(User.class);
 
-                    //todo add on completer listener
                     //add him to my matches list
                     assert myself != null;
                     addUserToChatList(myself, displayedUser);
@@ -101,19 +108,18 @@ public class Profiles_Fragment extends Fragment {
                     addUserToChatList(displayedUser, myself);
                     //remove my self from his likes list
                     displayedUserLikeList.child(firebaseUser.getUid()).removeValue();
-
-                }else
+                } else
                     addUserToLikesList(displayedUser);
 
                 //after adding the user - show me the next user
-                setNextUser();
+                showNextUser();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
     }
 
     private void addUserToLikesList(User displayedUser) {
@@ -130,58 +136,55 @@ public class Profiles_Fragment extends Fragment {
 
     private void readData(final FireBaseListCallBack fireBaseCallBack){
         appUserslist = new ArrayList<>();
-        ValueEventListener usersListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                appUserslist.clear();
-                //getting app users
-                for (DataSnapshot snap : snapshot.getChildren()){
-                    User currentUser = snap.getValue(User.class);
-                    assert currentUser != null;
-                    if (!currentUser.getId().equals(firebaseUser.getUid()))
-                        appUserslist.add(currentUser);
-                }
-                index = appUserslist.size();
-                fireBaseCallBack.onCallBack(appUserslist);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
+        ValueEventListener usersListener = appUsersListener(fireBaseCallBack);
         appUsersRef.addValueEventListener(usersListener);
     }
 
-    private void setNextUser() {
+    private ValueEventListener appUsersListener(final FireBaseListCallBack fireBaseCallBack) {
+        return new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    appUserslist.clear();
+                    //getting app users
+                    for (DataSnapshot snap : snapshot.getChildren()){
+                        User currentUser = snap.getValue(User.class);
+                        assert currentUser != null;
+                        if (!currentUser.getId().equals(firebaseUser.getUid()))
+                            appUserslist.add(currentUser);
+                    }
+                    index = appUserslist.size();
+                    fireBaseCallBack.onCallBack(appUserslist);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            };
+    }
+
+    private void showNextUser() {
         index -=1;
         if (index<0)
             index = appUserslist.size()-1;
-
         displayedUser = appUserslist.get(index);
-        //checking if we already have a match or like
-        //todo add the like check after finish testing
-        checkNextUser(displayedUser, new FireBaseListCallBack() {
-            @Override
-            public void onCallBack(List<User> list) {
-                if (alreadyMatched)
-                    setNextUser();
-            }
-        });
+        checkNextUser(displayedUser);
     }
 
-    private void checkNextUser(final User currentlyDisplayedUser, final FireBaseListCallBack fireBaseCallBack) {
-        final DatabaseReference myMatchesRef = appUsersRef.child(firebaseUser.getUid()).child(MyFireBase.KEYS.USER_MATCHES_LIST);
-        myMatchesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void checkNextUser(final User currentlyDisplayedUser) {
+        //checking if we already have a match or like
+        final DatabaseReference myUser = appUsersRef.child(firebaseUser.getUid());
+        myUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.hasChild(currentlyDisplayedUser.getId())){
+                if (!snapshot.child(MyFireBase.KEYS.USER_MATCHES_LIST).hasChild(currentlyDisplayedUser.getId()) &&
+                        !snapshot.child(MyFireBase.KEYS.USER_LIKES_LIST).hasChild(currentlyDisplayedUser.getId())){
                     displayUser(currentlyDisplayedUser);
-                    alreadyMatched = false;
-                }else
-                    alreadyMatched = true;
+                    notDisplayedUsers = 0;
+                } else {
+                    checkIfNoMoreUsers();
+                }
 
-                fireBaseCallBack.onCallBack(appUserslist);
             }
 
             @Override
@@ -189,6 +192,18 @@ public class Profiles_Fragment extends Fragment {
 
             }
         });
+    }
+
+    private void checkIfNoMoreUsers() {
+        notDisplayedUsers+=1;
+        if (!(notDisplayedUsers == appUserslist.size()))
+            showNextUser();
+        else {
+            User seenAllUsers = new User("", "", "NaN");
+            displayUser(seenAllUsers);
+            displayedUser = seenAllUsers;
+            MySignal.getInstance().showToast("You have seen all the app Users\nTry again later");
+        }
     }
 
     private void displayUser(final User currentUser) {
@@ -210,8 +225,8 @@ public class Profiles_Fragment extends Fragment {
     }
 
     private void setClickers() {
-        profiles_BTN_green.setOnClickListener(buttonClickListener());
-        profiles_BTN_red.setOnClickListener(buttonClickListener());
+        profiles_BTN_green.setOnClickListener(buttonClickListener);
+        profiles_BTN_red.setOnClickListener(buttonClickListener);
     }
 
     private void initFireBase() {

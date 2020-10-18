@@ -7,7 +7,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MyFireBase {
 
-    private DatabaseReference userListRef;
     private static FirebaseDatabase database;
     private static MyFireBase instance;
     private static Context appContext;
@@ -25,11 +24,6 @@ public class MyFireBase {
         if (instance == null)
             instance = new MyFireBase(context);
         return instance;
-    }
-
-    public void addUserToList(final User user) {
-        userListRef = database.getReference(KEYS.USERS_LIST);
-        userListRef.child(user.getName()).setValue(user);
     }
 
     public DatabaseReference getReference(String path) {
@@ -51,8 +45,6 @@ public class MyFireBase {
         String IMG_URL = "imageURL";
         String RATE = "rate";
         String NUMBER_OF_REVIEWS = "numberOfReviews";
-        String LOCATION = "location";
-        String KEY = "KEY";
     }
 
 

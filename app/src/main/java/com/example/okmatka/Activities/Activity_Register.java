@@ -66,11 +66,19 @@ public class Activity_Register extends AppCompatActivity {
     };
 
     private boolean isValidUser() {
-        if (checkEmail(register_EDT_email.getText().toString()) && checkPassword()) {
+        if (checkEmail(String.valueOf(register_EDT_email.getText())) && checkPassword() && checkName()) {
             currentUser = new User(String.valueOf(register_EDT_email.getText()),
                     String.valueOf(register_EDT_password.getText()), String.valueOf(register_EDT_name.getText()));
             return true;
         }
+        return false;
+    }
+
+    private boolean checkName() {
+        if (!String.valueOf(register_EDT_name.getText()).equals("NaN"))
+            return true;
+        else
+            MySignal.getInstance().showToast("name cant be NaN");
         return false;
     }
 
@@ -93,7 +101,7 @@ public class Activity_Register extends AppCompatActivity {
                     currentUser.setId(userId);
                     myRef.child(userId).setValue(currentUser).addOnCompleteListener(setValueCompleteListener());
                 }else {
-                    //todo check if the intenet is the problem
+                    //todo check if the internet is the problem
                     MySignal.getInstance().showToast("Task was not completed\n user was not saved");
                 }
             }
