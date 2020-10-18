@@ -52,7 +52,7 @@ public class Activity_Messages extends AppCompatActivity {
     private String userISpeakWithId;
     private DatabaseReference myRef;
     private User userISpeakWith;
-    private String matchMapIdRefKey= "";
+    private String matchMapIdRefKey= "def";
     public static final String USER_ID = "USER_ID";
 
     @Override
@@ -114,7 +114,7 @@ public class Activity_Messages extends AppCompatActivity {
         public void getAnswer(Boolean invite) {
             if (invite) {
                 //checking if there is already room ready
-                if (!matchMapIdRefKey.equals(""))
+                if (!matchMapIdRefKey.equals("def"))
                     myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
 
                 //preparing new room
@@ -148,8 +148,26 @@ public class Activity_Messages extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkKeyDialog();
+                myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).
+                        addListenerForSingleValueEvent(roomExistenceListener(matchMapIdRefKey,true));
             }
+        };
+    }
+
+    private ValueEventListener roomExistenceListener(final String key,final boolean enterDialog) {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(key))
+                    goToMapActivity(key);
+                else if(enterDialog)
+                    checkKeyDialog();
+                else
+                    MySignal.getInstance().showToast("This key is wrong\n or no longer valid");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
     }
 
@@ -162,23 +180,11 @@ public class Activity_Messages extends AppCompatActivity {
     private KeyDialogCallBack keyDialogCallBack = new KeyDialogCallBack() {
         @Override
         public void getKey(final String key) {
-            myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.hasChild(key))
-                        goToMapActivity(key);
-                    else
-                        MySignal.getInstance().showToast("This key is wrong\n or no longer valid");
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+            if (!key.equals(""))
+             myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).
+                     addListenerForSingleValueEvent(roomExistenceListener(key,false));
         }
     };
-
 
     private void goToMapActivity(String keyRef) {
         Intent intent = new Intent(Activity_Messages.this, Activity_Map.class);

@@ -4,6 +4,6 @@ import com.example.okmatka.User;
 
 import java.util.List;
 
-public interface FireBaseCallBack {
+public interface FireBaseListCallBack {
     void onCallBack(List<User> list);
 }

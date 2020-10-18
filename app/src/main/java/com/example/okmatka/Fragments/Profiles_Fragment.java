@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.okmatka.Interfaces.FireBaseCallBack;
+import com.example.okmatka.Interfaces.FireBaseListCallBack;
 import com.example.okmatka.MyFireBase;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
@@ -58,8 +58,8 @@ public class Profiles_Fragment extends Fragment {
         return view;
     }
 
-    private FireBaseCallBack getFireBaseCallBack() {
-        return new FireBaseCallBack() {
+    private FireBaseListCallBack getFireBaseCallBack() {
+        return new FireBaseListCallBack() {
             @Override
             public void onCallBack(List<User> list) {
                 if(getActivity()!=null)
@@ -128,7 +128,7 @@ public class Profiles_Fragment extends Fragment {
         myMatchesList.child(userToBeAdded.getId()).setValue(userToBeAdded);
     }
 
-    private void readData(final FireBaseCallBack fireBaseCallBack){
+    private void readData(final FireBaseListCallBack fireBaseCallBack){
         appUserslist = new ArrayList<>();
         ValueEventListener usersListener = new ValueEventListener() {
             @Override
@@ -161,7 +161,7 @@ public class Profiles_Fragment extends Fragment {
         displayedUser = appUserslist.get(index);
         //checking if we already have a match or like
         //todo add the like check after finish testing
-        checkNextUser(displayedUser, new FireBaseCallBack() {
+        checkNextUser(displayedUser, new FireBaseListCallBack() {
             @Override
             public void onCallBack(List<User> list) {
                 if (alreadyMatched)
@@ -170,7 +170,7 @@ public class Profiles_Fragment extends Fragment {
         });
     }
 
-    private void checkNextUser(final User currentlyDisplayedUser, final FireBaseCallBack fireBaseCallBack) {
+    private void checkNextUser(final User currentlyDisplayedUser, final FireBaseListCallBack fireBaseCallBack) {
         final DatabaseReference myMatchesRef = appUsersRef.child(firebaseUser.getUid()).child(MyFireBase.KEYS.USER_MATCHES_LIST);
         myMatchesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

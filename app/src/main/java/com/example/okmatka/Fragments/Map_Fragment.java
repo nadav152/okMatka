@@ -1,8 +1,11 @@
 package com.example.okmatka.Fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.okmatka.MyFireBase;
@@ -25,6 +29,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -122,26 +128,24 @@ public class Map_Fragment extends Fragment {
                 return;
             }
             googleMap.setMyLocationEnabled(true);
-
-            //todo change to zoom on my location
-            // Animating to the touched position
-//            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentUserPos).zoom(18).build();
-//            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-            // Placing a marker on the touched position
             placeMarker(googleMap);
         }
     };
 
     private void placeMarker(GoogleMap googleMap) {
-//        MarkerOptions marker = new MarkerOptions()
-//                    .position(currentUserPos)
-//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.general_user));
-
-
         MarkerOptions marker = new MarkerOptions()
-                .position(currentUserPos);
+                    .position(currentUserPos)
+                    .icon(bitmapDescriptorFromVector(getActivity(),R.drawable.user_location));
         googleMap.addMarker(marker);
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
     private Runnable updateMyLocation = new Runnable() {

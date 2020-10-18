@@ -81,8 +81,8 @@ public class Activity_Main extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        checkStatus("offline");
         //todo check if i have more then one listener
+        checkStatus("offline");
         myUserRef.removeEventListener(myDetailsListener());
     }
 
