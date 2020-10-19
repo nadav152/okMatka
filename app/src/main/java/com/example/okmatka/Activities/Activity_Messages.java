@@ -75,6 +75,8 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void removeLocations() {
+        // todo check when the first user loges in
+        //todo add when app dies
         if (!matchMapIdRefKey.equals("def"))
             myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
     }

@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -53,6 +51,7 @@ public class Activity_Main extends AppCompatActivity {
     private Animation cloeAnimation ;
     private Animation fromTopAnimation;
     private Animation toBTopAnimation;
+
     private boolean clickable = false;
 
 
@@ -60,7 +59,6 @@ public class Activity_Main extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        animIt();
         findViews();
         setAnimations();
         loadFloatBtnPictures();
@@ -174,7 +172,7 @@ public class Activity_Main extends AppCompatActivity {
     }
 
     private void addButtons() {
-        setvisiblty(clickable);
+        setVisibly(clickable);
         setButtonsAnimation(clickable);
         setClicks(clickable);
         clickable = !clickable;
@@ -203,7 +201,7 @@ public class Activity_Main extends AppCompatActivity {
         }
     }
 
-    private void setvisiblty(boolean makeVisible) {
+    private void setVisibly(boolean makeVisible) {
         if (!makeVisible){
             main_FAB_settings.setVisibility(View.VISIBLE);
             main_FAB_logout.setVisibility(View.VISIBLE);
@@ -224,15 +222,6 @@ public class Activity_Main extends AppCompatActivity {
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("status",status);
         myUserRef.updateChildren(hashMap);
-    }
-
-    private void animIt() {
-        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.main_Lay_mainLayout);
-        AlphaAnimation animation = new AlphaAnimation(0.0f , 1.0f ) ;
-        animation.setFillAfter(true);
-        animation.setDuration(3500);
-        //apply the animation ( fade In ) to your LAyout
-        layout.startAnimation(animation);
     }
 
     private void setAnimations() {

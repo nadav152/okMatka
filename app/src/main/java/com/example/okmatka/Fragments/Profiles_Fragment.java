@@ -1,5 +1,6 @@
 package com.example.okmatka.Fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ public class Profiles_Fragment extends Fragment {
     private int index = -1;
     private int notDisplayedUsers = 0;
     private int compareIndex = 0;
+    private ProgressDialog progressDialog;
 
     public Profiles_Fragment() {
 
@@ -58,7 +60,14 @@ public class Profiles_Fragment extends Fragment {
         initFireBase();
         readData(getFireBaseCallBack());
         setClickers();
+        showProgressDialog();
         return view;
+    }
+
+    private void showProgressDialog() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading Users");
+        progressDialog.show();
     }
 
     @Override
@@ -77,6 +86,8 @@ public class Profiles_Fragment extends Fragment {
         return new FireBaseListCallBack() {
             @Override
             public void onCallBack(List<User> list) {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
                 if(getActivity()!=null)
                     showNextUser();
             }
@@ -193,8 +204,11 @@ public class Profiles_Fragment extends Fragment {
         index -=1;
         if (index<0)
             index = appUsersList.size()-1;
-        displayedUser = appUsersList.get(index);
-        checkNextUser(displayedUser);
+
+        if (appUsersList.size() > 0) { //if only one user in app
+            displayedUser = appUsersList.get(index);
+            checkNextUser(displayedUser);
+        }
     }
 
     private void checkNextUser(final User currentlyDisplayedUser) {

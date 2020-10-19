@@ -148,4 +148,5 @@ public class User {
                 ", name='" + name + '\'' +
                 '}';
     }
+    //todo delete not needed methods
 }

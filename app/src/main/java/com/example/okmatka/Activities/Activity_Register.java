@@ -1,6 +1,8 @@
 package com.example.okmatka.Activities;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -75,10 +77,11 @@ public class Activity_Register extends AppCompatActivity {
     }
 
     private boolean checkName() {
-        if (!String.valueOf(register_EDT_name.getText()).equals("NaN"))
+        if (!String.valueOf(register_EDT_name.getText()).equals("NaN") &&
+                !String.valueOf(register_EDT_name.getText()).equals(""))
             return true;
         else
-            MySignal.getInstance().showToast("name cant be NaN");
+            MySignal.getInstance().showToast("name cant be blank or NaN");
         return false;
     }
 
@@ -101,8 +104,10 @@ public class Activity_Register extends AppCompatActivity {
                     currentUser.setId(userId);
                     myRef.child(userId).setValue(currentUser).addOnCompleteListener(setValueCompleteListener());
                 }else {
-                    //todo check if the internet is the problem
+                    if (isNetworkConnected())
                     MySignal.getInstance().showToast("Task was not completed\n user was not saved");
+                    else
+                        MySignal.getInstance().showToast("Make sure you have internet connection");
                 }
             }
         };
@@ -136,6 +141,11 @@ public class Activity_Register extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
     private void glide(int img, ImageView into) {

@@ -1,6 +1,8 @@
 package com.example.okmatka.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -79,7 +81,7 @@ public class Activity_Login extends AppCompatActivity {
     };
 
     private void checkDetails(final String email, final String password) {
-        if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password))
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password))
             firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(completeLoginListener());
         else
             MySignal.getInstance().showToast("Please Fill Up All Details");
@@ -92,10 +94,18 @@ public class Activity_Login extends AppCompatActivity {
                 if (task.isSuccessful()){
                     moveToActivityProfiles();
                 }else
-                    //todo check if the intenet is the problem
+
+                   if (isNetworkConnected())
                     MySignal.getInstance().showToast("Wrong Credentials");
+                   else
+                       MySignal.getInstance().showToast("Please make sure you\nhave internet connection");
             }
         };
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
 
