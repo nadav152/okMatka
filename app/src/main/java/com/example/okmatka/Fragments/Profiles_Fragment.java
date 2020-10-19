@@ -1,6 +1,7 @@
 package com.example.okmatka.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +38,12 @@ public class Profiles_Fragment extends Fragment {
     private MaterialButton profiles_BTN_red, profiles_BTN_green;
     private DatabaseReference appUsersRef;
     private FirebaseUser firebaseUser;
-    private ArrayList<User> appUserslist;
+    private ValueEventListener usersListener;
+    private ArrayList<User> appUsersList;
     private User displayedUser;
     private int index = -1;
     private int notDisplayedUsers = 0;
+    private int compareIndex = 0;
 
     public Profiles_Fragment() {
 
@@ -58,6 +61,18 @@ public class Profiles_Fragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        appUsersRef.addValueEventListener(usersListener);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        appUsersRef.removeEventListener(usersListener);
+        super.onPause();
+    }
+
     private FireBaseListCallBack getFireBaseCallBack() {
         return new FireBaseListCallBack() {
             @Override
@@ -72,6 +87,7 @@ public class Profiles_Fragment extends Fragment {
         @Override
         public void onClick(View view) {
             if (index != -1) {
+                isAllUsersSeen(); // toast to the user
                 if (view.getTag().equals("red")) {
                     showNextUser();
                 } else {
@@ -81,16 +97,20 @@ public class Profiles_Fragment extends Fragment {
         }
     };
 
+    private void isAllUsersSeen() {
+        if (notDisplayedUsers >= appUsersList.size())
+            MySignal.getInstance().showToast("You have seen all the app Users\nTry again later");
+    }
 
     private void checkMatchWithUser(final User displayedUser) {
         if (!displayedUser.getName().equals("NaN")) {
-            DatabaseReference displayedUserLikeList = appUsersRef.child(displayedUser.getId())
+            DatabaseReference userLikeListRef = appUsersRef.child(displayedUser.getId())
                     .child(MyFireBase.KEYS.USER_LIKES_LIST);
-            displayedUserLikeList.addListenerForSingleValueEvent(maybeMatchListener(displayedUser, displayedUserLikeList));
+            userLikeListRef.addListenerForSingleValueEvent(isItMatchListener(displayedUser, userLikeListRef));
         }
     }
 
-    private ValueEventListener maybeMatchListener(final User displayedUser, final DatabaseReference displayedUserLikeList) {
+    private ValueEventListener isItMatchListener(final User displayedUser, final DatabaseReference displayedUserLikeList) {
         return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -108,6 +128,7 @@ public class Profiles_Fragment extends Fragment {
                 } else
                     addUserToLikesList(displayedUser);
 
+                Log.d("ppp","got here");
                 //after adding the user - show me the next user
                 showNextUser();
             }
@@ -132,26 +153,27 @@ public class Profiles_Fragment extends Fragment {
     }
 
     private void readData(final FireBaseListCallBack fireBaseCallBack){
-        appUserslist = new ArrayList<>();
-        ValueEventListener usersListener = appUsersListener(fireBaseCallBack);
-        appUsersRef.addValueEventListener(usersListener);
+        appUsersList = new ArrayList<>();
+        usersListener = appUsersListener(fireBaseCallBack);
+        // read will be on resume
     }
 
     private ValueEventListener appUsersListener(final FireBaseListCallBack fireBaseCallBack) {
         return new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    appUserslist.clear();
+                    appUsersList.clear();
                     //getting app users
                     for (DataSnapshot snap : snapshot.getChildren()){
                         User currentUser = snap.getValue(User.class);
                         assert currentUser != null;
                         if (!currentUser.getId().equals(firebaseUser.getUid()))
-                            appUserslist.add(currentUser);
+                            appUsersList.add(currentUser);
                     }
-                    notDisplayedUsers = 0;
-                    index = appUserslist.size();
-                    fireBaseCallBack.onCallBack(appUserslist);
+                    index = appUsersList.size();
+                    //only if there is a new user reset the notDisplayedUsers counter
+                    checkNewUserJoin();
+                    fireBaseCallBack.onCallBack(appUsersList);
                 }
 
                 @Override
@@ -159,11 +181,19 @@ public class Profiles_Fragment extends Fragment {
             };
     }
 
+    private void checkNewUserJoin() {
+        if (compareIndex < index)
+        {
+            compareIndex = index;
+            notDisplayedUsers = 0;
+        }
+    }
+
     private void showNextUser() {
         index -=1;
         if (index<0)
-            index = appUserslist.size()-1;
-        displayedUser = appUserslist.get(index);
+            index = appUsersList.size()-1;
+        displayedUser = appUsersList.get(index);
         checkNextUser(displayedUser);
     }
 
@@ -187,13 +217,12 @@ public class Profiles_Fragment extends Fragment {
 
     private void checkIfNoMoreUsers() {
         notDisplayedUsers+=1;
-        if (notDisplayedUsers <= appUserslist.size())
+        if (notDisplayedUsers <= appUsersList.size())
             showNextUser();
         else {
             User seenAllUsers = new User("", "", "NaN");
             displayUser(seenAllUsers);
             displayedUser = seenAllUsers;
-            MySignal.getInstance().showToast("You have seen all the app Users\nTry again later");
         }
     }
 
