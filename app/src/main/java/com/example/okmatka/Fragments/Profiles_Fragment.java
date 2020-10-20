@@ -60,14 +60,8 @@ public class Profiles_Fragment extends Fragment {
         initFireBase();
         readData(getFireBaseCallBack());
         setClickers();
-        showProgressDialog();
+        showLoadingUsersDialog();
         return view;
-    }
-
-    private void showProgressDialog() {
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage("Loading Users");
-        progressDialog.show();
     }
 
     @Override
@@ -256,6 +250,12 @@ public class Profiles_Fragment extends Fragment {
 
     private void setValue(TextView textView, String name) {
         textView.setText(name);
+    }
+
+    private void showLoadingUsersDialog() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading Users");
+        progressDialog.show();
     }
 
     private void setClickers() {

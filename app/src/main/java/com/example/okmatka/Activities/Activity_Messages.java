@@ -2,6 +2,7 @@ package com.example.okmatka.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,6 +38,7 @@ import com.google.gson.Gson;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Activity_Messages extends AppCompatActivity {
 
@@ -50,7 +52,7 @@ public class Activity_Messages extends AppCompatActivity {
     private ArrayList<ChatMessage> chatsList;
     private FirebaseUser firebaseUser;
     private String userISpeakWithId;
-    private DatabaseReference myRef;
+    private DatabaseReference databaseRef;
     private User userISpeakWith;
     private String matchMapIdRefKey= "def";
     public static final String USER_ID = "USER_ID";
@@ -61,6 +63,7 @@ public class Activity_Messages extends AppCompatActivity {
         setContentView(R.layout.activity_messages);
         findViews();
         setFireBase();
+        deletePreviousLocations(); // if the app crashed
         setConversation();
         setRecyclerView();
         loadImageToButton();
@@ -68,17 +71,10 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         //to prevent storing a not needed data
-        removeLocations();
-        super.onStop();
-    }
-
-    private void removeLocations() {
-        // todo check when the first user loges in
-        //todo add when app dies
-        if (!matchMapIdRefKey.equals("def"))
-            myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
+        deletePreviousLocations();
+        super.onDestroy();
     }
 
     private void loadImageToButton() {
@@ -86,7 +82,7 @@ public class Activity_Messages extends AppCompatActivity {
     }
 
     private void setFireBase() {
-        myRef = FirebaseDatabase.getInstance().getReference();
+        databaseRef = FirebaseDatabase.getInstance().getReference();
     }
 
     private void setRecyclerView() {
@@ -118,7 +114,7 @@ public class Activity_Messages extends AppCompatActivity {
             if (invite) {
                 //checking if there is already room ready
                 if (!matchMapIdRefKey.equals("def"))
-                    myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
+                    databaseRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).removeValue();
 
                 //preparing new room
                 String uniqueNumber = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
@@ -127,7 +123,8 @@ public class Activity_Messages extends AppCompatActivity {
                         uniqueNumber;
                 sendMessage(firebaseUser.getUid(),userISpeakWithId,invitationMessage);
                 matchMapIdRefKey = uniqueNumber;
-                myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey).setValue("room has opened");
+                databaseRef.child(MyFireBase.KEYS.USERS_LOCATIONS).child(matchMapIdRefKey)
+                        .child(MyFireBase.KEYS.ROOM_CREATOR).setValue(firebaseUser.getUid());
             }
         }
     };
@@ -151,7 +148,7 @@ public class Activity_Messages extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).
+                databaseRef.child(MyFireBase.KEYS.USERS_LOCATIONS).
                         addListenerForSingleValueEvent(roomExistenceListener(matchMapIdRefKey,true));
             }
         };
@@ -161,17 +158,34 @@ public class Activity_Messages extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(key))
-                    goToMapActivity(key);
+                /*if i am user user who created the room enter right away,
+                else check matching key in dialog.
+               if enterDialog = false -> it means that user already tried the key
+               dialog waits for the result
+                 */
+                if (snapshot.hasChild(key)) {
+                    checkRoomCreator(enterDialog, key);
+                }
                 else if(enterDialog)
                     checkKeyDialog();
                 else
+                    //no need to enterDialog - the program came from there
                     MySignal.getInstance().showToast("This key is wrong\n or no longer valid");
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         };
+    }
+
+    private void checkRoomCreator(boolean iCreatedTheRoom, String key) {
+        Log.d("ppp"," i created Room in activity messages = " + iCreatedTheRoom);
+        if (iCreatedTheRoom)
+            //i am the creator of the room
+            goToMapActivity(key, true);
+        else
+            //i am not the creator of the room
+            goToMapActivity(key, false);
     }
 
     private void checkKeyDialog() {
@@ -184,18 +198,19 @@ public class Activity_Messages extends AppCompatActivity {
         @Override
         public void getKey(final String key) {
             if (!key.equals(""))
-             myRef.child(MyFireBase.KEYS.USERS_LOCATIONS).
+             databaseRef.child(MyFireBase.KEYS.USERS_LOCATIONS).
                      addListenerForSingleValueEvent(roomExistenceListener(key,false));
         }
     };
 
-    private void goToMapActivity(String keyRef) {
+    private void goToMapActivity(String keyRef,boolean iCreatedTheRoom) {
         Intent intent = new Intent(Activity_Messages.this, Activity_Map.class);
         Gson gson = new Gson();
         assert userISpeakWith !=null;
         intent.putExtra(Activity_Map.KEY_REF,keyRef);
         String myGson = gson.toJson(userISpeakWith);
         intent.putExtra(Activity_Map.USER,myGson);
+        intent.putExtra(Activity_Map.ROOM_CREATOR,iCreatedTheRoom);
         startActivity(intent);
     }
 
@@ -206,7 +221,7 @@ public class Activity_Messages extends AppCompatActivity {
         hashMap.put("receiver",receiver);
         hashMap.put("message",message);
 
-        myRef.child(MyFireBase.KEYS.USERS_CHATS).push().setValue(hashMap);
+        databaseRef.child(MyFireBase.KEYS.USERS_CHATS).push().setValue(hashMap);
 
     }
 
@@ -216,7 +231,7 @@ public class Activity_Messages extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert userISpeakWithId != null;
-        DatabaseReference userISpeakWithReference = myRef.child(MyFireBase.KEYS.USERS_LIST).child(userISpeakWithId);
+        DatabaseReference userISpeakWithReference = databaseRef.child(MyFireBase.KEYS.USERS_LIST).child(userISpeakWithId);
         userISpeakWithReference.addValueEventListener(valueListener());
     }
 
@@ -275,6 +290,31 @@ public class Activity_Messages extends AppCompatActivity {
 
             }
         };
+    }
+
+    private void deletePreviousLocations() {
+        final DatabaseReference usersLocationRef = databaseRef.child(MyFireBase.KEYS.USERS_LOCATIONS);
+        usersLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren()){
+                    if (checkLocationRoom(snap, usersLocationRef))
+                        break;
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        });
+    }
+
+    private boolean checkLocationRoom(DataSnapshot snap, DatabaseReference usersLocationRef) {
+        if (snap.hasChild(MyFireBase.KEYS.ROOM_CREATOR)) {
+            if (Objects.equals(snap.child(MyFireBase.KEYS.ROOM_CREATOR).getValue(String.class), firebaseUser.getUid())) {
+                usersLocationRef.child(Objects.requireNonNull(snap.getKey())).removeValue();
+                return true;
+            }
+        }
+        return false;
     }
 
     private void findViews() {

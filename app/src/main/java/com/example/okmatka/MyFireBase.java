@@ -36,6 +36,7 @@ public class MyFireBase {
         String USER_LIKES_LIST = "USER_LIKES_LIST/";
         String USER_MATCHES_LIST = "USER_MATCHES_LIST/";
         String USERS_LOCATIONS = "USERS_LOCATIONS";
+        String ROOM_CREATOR = "ROOM_CREATOR";
         String UPLOADS = "UPLOADS";
         String NAME = "name";
         String ROLL = "roll";

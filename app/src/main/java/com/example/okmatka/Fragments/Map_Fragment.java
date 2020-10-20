@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,19 +52,19 @@ public class Map_Fragment extends Fragment {
     private FirebaseUser firebaseUser;
     private DatabaseReference usersLocationRef;
     private LatLng currentUserPos;
-    private Bitmap bitmap;
-    private String userSrc = "default";
     private String matchRef;
     private double lat = 0.0;
     private double lon = 0.0;
+    private boolean iCreatedTheRoom;
 
     public Map_Fragment() {
     }
 
-    public Map_Fragment(User user, String matchRef) {
+    public Map_Fragment(User user, String matchRef,boolean iCreatedTheRoom) {
         this.userISpeakWithId = user.getId();
         this.userISpeakWith = user;
         this.matchRef = matchRef;
+        this.iCreatedTheRoom = iCreatedTheRoom;
     }
 
     @Override
@@ -79,9 +80,7 @@ public class Map_Fragment extends Fragment {
         mapView.onCreate(savedInstanceState);
         initFireBase();
         initLPosition();
-        setBitMap();
         setFireBaseListener();
-//        setMarkerOnLocation();
         return v;
     }
 
@@ -226,17 +225,13 @@ public class Map_Fragment extends Fragment {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         usersLocationRef = MyFireBase.getInstance().
                 getReference(MyFireBase.KEYS.USERS_LOCATIONS).child(matchRef);
+        Log.d("ppp"," i created Room in map fragment = " + iCreatedTheRoom);
+        if (iCreatedTheRoom)
+            usersLocationRef.child(MyFireBase.KEYS.ROOM_CREATOR).setValue(firebaseUser.getUid());
     }
 
     private void initLPosition() {
         currentUserPos = new LatLng(32.079994 ,34.767316);
-    }
-
-    private void setBitMap(){
-        if (!userISpeakWith.getImageURL().equals("default")) {
-            userSrc = userISpeakWith.getImageURL();
-
-        }
     }
 
 }
