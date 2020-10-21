@@ -93,11 +93,10 @@ public class Profiles_Fragment extends Fragment {
         public void onClick(View view) {
             if (index != -1) {
                 isAllUsersSeen(); // toast to the user
-                if (view.getTag().equals("red")) {
+                if (view.getTag().equals("red"))
                     showNextUser();
-                } else {
+                 else
                     checkMatchWithUser(displayedUser);
-                }
             }
         }
     };
@@ -187,6 +186,7 @@ public class Profiles_Fragment extends Fragment {
     }
 
     private void checkNewUserJoin() {
+        //this method helps to know if user has no more profiles to see
         if (compareIndex < index)
         {
             compareIndex = index;
@@ -228,6 +228,7 @@ public class Profiles_Fragment extends Fragment {
         if (notDisplayedUsers <= appUsersList.size())
             showNextUser();
         else {
+            //no profiles left - display general user
             User seenAllUsers = new User("", "", "NaN");
             displayUser(seenAllUsers);
             displayedUser = seenAllUsers;
@@ -240,15 +241,15 @@ public class Profiles_Fragment extends Fragment {
         else
             Glide.with(this).load(currentUser.getImageURL()).into(profiles_IMG_character_pic);
 
-        setValue(profiles_LBL_name,"Name : " + currentUser.getName());
-        setValue(profiles_LBL_age,"Age : " + currentUser.getAge());
-        setValue(profiles_LBL_roll,"Roll : " + currentUser.getRoll());
-        setValue(profiles_LBL_experience,"Experience : " + currentUser.getExperience());
-        setValue(profiles_LBL_favourite_beach, "Favourite Beach : " + currentUser.getFavouriteBeach());
-        setValue(profiles_LBL_rate,"Rate : " + currentUser.getRate() / currentUser.getNumberOfReviews());
+        setTextViewValue(profiles_LBL_name,"Name : " + currentUser.getName());
+        setTextViewValue(profiles_LBL_age,"Age : " + currentUser.getAge());
+        setTextViewValue(profiles_LBL_roll,"Roll : " + currentUser.getRoll());
+        setTextViewValue(profiles_LBL_experience,"Experience : " + currentUser.getExperience());
+        setTextViewValue(profiles_LBL_favourite_beach, "Favourite Beach : " + currentUser.getFavouriteBeach());
+        setTextViewValue(profiles_LBL_rate,"Rate : " + currentUser.getRate() / currentUser.getNumberOfReviews());
     }
 
-    private void setValue(TextView textView, String name) {
+    private void setTextViewValue(TextView textView, String name) {
         textView.setText(name);
     }
 

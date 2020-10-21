@@ -91,16 +91,19 @@ public class Activity_Login extends AppCompatActivity {
         return new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful())
                     moveToActivityProfiles();
-                }else
-
-                   if (isNetworkConnected())
-                    MySignal.getInstance().showToast("Wrong Credentials");
-                   else
-                       MySignal.getInstance().showToast("Please make sure you\nhave internet connection");
+                else
+                    isInternetOn();
             }
         };
+    }
+
+    private void isInternetOn() {
+        if (isNetworkConnected())
+            MySignal.getInstance().showToast("Wrong Credentials");
+        else
+            MySignal.getInstance().showToast("Please make sure you\nhave internet connection");
     }
 
     private boolean isNetworkConnected() {

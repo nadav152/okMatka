@@ -246,23 +246,28 @@ public class Activity_Settings extends AppCompatActivity {
 
     private void submitData(TextInputLayout textInputLayout, TextInputEditText editText, String fireBaseKey, String entryStr, boolean isInt) {
         String newValue = String.valueOf(editText.getText());
-
         if (!newValue.equals("")) {
+
             //if user edit his age
-            if (isInt)
-                if (android.text.TextUtils.isDigitsOnly(newValue))
-                myRef.child(fireBaseKey).setValue(Integer.parseInt(newValue));
-                else {
-                    MySignal.getInstance().showToast("Age must be numeric");
-                    return;
-                }
-            else
-            //user edit his other info
+            if (isInt) {
+                if (checkIfNewValInt(fireBaseKey, newValue)) return;
+            } else
                 myRef.child(fireBaseKey).setValue(newValue);
 
             textInputLayout.setHint(entryStr + newValue);
         }
         editText.setText("");
+    }
+
+    private boolean checkIfNewValInt(String fireBaseKey, String newValue) {
+        //if new val is not int do not update
+        if (android.text.TextUtils.isDigitsOnly(newValue))
+            myRef.child(fireBaseKey).setValue(Integer.parseInt(newValue));
+        else {
+            MySignal.getInstance().showToast("Age must be Integer");
+            return true;
+        }
+        return false;
     }
 
     private void setListeners() {

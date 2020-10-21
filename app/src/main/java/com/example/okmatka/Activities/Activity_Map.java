@@ -1,7 +1,6 @@
 package com.example.okmatka.Activities;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,7 +37,6 @@ public class Activity_Map extends AppCompatActivity {
     }
 
     private void initFragment() {
-        Log.d("ppp"," i created Room in activity map = " + iCreatedTheRoom);
         map_fragment = new Map_Fragment(user,usersLocationRef,iCreatedTheRoom);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.map_LAY_map, map_fragment);

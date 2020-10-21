@@ -22,6 +22,7 @@ import com.example.okmatka.Interfaces.KeyDialogCallBack;
 import com.example.okmatka.InviteDialog;
 import com.example.okmatka.KeyDialog;
 import com.example.okmatka.MyFireBase;
+import com.example.okmatka.MySP;
 import com.example.okmatka.MySignal;
 import com.example.okmatka.R;
 import com.example.okmatka.User;
@@ -34,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -49,7 +51,8 @@ public class Activity_Messages extends AppCompatActivity {
     private ImageButton messages_BTN_sendButton,  messages_BTN_mapButton;
     private MaterialButton messages_BTN_inviteButton;
     private MessageAdapter messageAdapter;
-    private ArrayList<ChatMessage> chatsList;
+    private HashMap<String,ChatMessage> chatsKeysMap;
+    private ArrayList<ChatMessage> chatsList;;
     private FirebaseUser firebaseUser;
     private String userISpeakWithId;
     private DatabaseReference databaseRef;
@@ -63,6 +66,7 @@ public class Activity_Messages extends AppCompatActivity {
         setContentView(R.layout.activity_messages);
         findViews();
         setFireBase();
+        getChatSPInfo();
         deletePreviousLocations(); // if the app crashed
         setConversation();
         setRecyclerView();
@@ -128,21 +132,6 @@ public class Activity_Messages extends AppCompatActivity {
             }
         }
     };
-
-    private View.OnClickListener sendMessageListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = String.valueOf(messages_EDT_sendMessage.getText());
-                if (!message.equals(""))
-                    sendMessage(firebaseUser.getUid(),userISpeakWithId,message);
-                else
-                    MySignal.getInstance().showToast("You can not send empty messages");
-
-                messages_EDT_sendMessage.setText("");
-            }
-        };
-    }
 
     private View.OnClickListener mapListener() {
         return new View.OnClickListener() {
@@ -214,17 +203,6 @@ public class Activity_Messages extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void sendMessage(String sender, String receiver, String message) {
-
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("sender",sender);
-        hashMap.put("receiver",receiver);
-        hashMap.put("message",message);
-
-        databaseRef.child(MyFireBase.KEYS.USERS_CHATS).push().setValue(hashMap);
-
-    }
-
     private void setConversation() {
         Intent intent = getIntent();
         userISpeakWithId = intent.getStringExtra(USER_ID);
@@ -232,14 +210,16 @@ public class Activity_Messages extends AppCompatActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert userISpeakWithId != null;
         DatabaseReference userISpeakWithReference = databaseRef.child(MyFireBase.KEYS.USERS_LIST).child(userISpeakWithId);
-        userISpeakWithReference.addValueEventListener(valueListener());
+        userISpeakWithReference.addListenerForSingleValueEvent(userDetailsListener());
+        //reading the latest messages from the user
+        readMessages(firebaseUser.getUid(),userISpeakWithId);
     }
 
-    private ValueEventListener valueListener() {
+    private ValueEventListener userDetailsListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //setting the toolBar with user details first
+                //setting the toolBar with user details
                 userISpeakWith = snapshot.getValue(User.class);
                 assert userISpeakWith != null;
                 messages_LBL_userName.setText(userISpeakWith.getName());
@@ -248,48 +228,67 @@ public class Activity_Messages extends AppCompatActivity {
                     Glide.with(getApplicationContext()).load(R.drawable.general_user).into(messages_IMG_userPic);
                 else
                     Glide.with(getApplicationContext()).load(userISpeakWith.getImageURL()).into(messages_IMG_userPic);
-
-                //reading the latest messages from the user
-                readMessage(firebaseUser.getUid(),userISpeakWithId);
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
     }
 
-    private void readMessage(final String myId, final String userISpeakToId) {
-        chatsList = new ArrayList<>();
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference(MyFireBase.KEYS.USERS_CHATS);
-        myRef.addValueEventListener(readMessageListener(myId, userISpeakToId));
-
+    private void readMessages(final String myId, final String userISpeakToId) {
+        DatabaseReference chatsRef = MyFireBase.getInstance().getReference(MyFireBase.KEYS.USERS_CHATS);
+        chatsRef.addValueEventListener(readMessageListener(myId, userISpeakToId));
     }
 
     private ValueEventListener readMessageListener(final String myId, final String userISpeakToId) {
         return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                chatsList.clear();
-                for (DataSnapshot snap : snapshot.getChildren()){
-                    ChatMessage currentChatMessage = snap.getValue(ChatMessage.class);
-                    assert currentChatMessage != null;
-                    if (currentChatMessage.getReceiver().equals(myId) && currentChatMessage.getSender().equals(userISpeakToId)||
-                            currentChatMessage.getReceiver().equals(userISpeakToId) && currentChatMessage.getSender().equals(myId)){
-                        chatsList.add(currentChatMessage);
+                ArrayList<ChatMessage> chatArrayList = new ArrayList<>();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    if (!chatsKeysMap.containsKey(snap.getKey())) {
+                        ChatMessage chat = snap.getValue(ChatMessage.class);
+                        chatsKeysMap.put(snap.getKey(), chat);
+                        chatsList.add(chat);
                     }
-                    messageAdapter = new MessageAdapter(Activity_Messages.this,chatsList);
-                    messages_RCV_recyclerView.setAdapter(messageAdapter);
                 }
-
+                saveChatInfoToSP();
+                for (ChatMessage currentChat : chatsList) {
+                    if (currentChat.getReceiver().equals(myId) && currentChat.getSender().equals(userISpeakToId) ||
+                            currentChat.getReceiver().equals(userISpeakToId) && currentChat.getSender().equals(myId)) {
+                        chatArrayList.add(currentChat);
+                    }
+                }
+                messageAdapter = new MessageAdapter(Activity_Messages.this, chatArrayList);
+                messages_RCV_recyclerView.setAdapter(messageAdapter);
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) { }
+        };
+    }
 
+    private View.OnClickListener sendMessageListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = String.valueOf(messages_EDT_sendMessage.getText());
+                if (!message.equals(""))
+                    sendMessage(firebaseUser.getUid(),userISpeakWithId,message);
+                else
+                    MySignal.getInstance().showToast("You can not send empty messages");
+
+                messages_EDT_sendMessage.setText("");
             }
         };
+    }
+
+    private void sendMessage(String sender, String receiver, String message) {
+
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("sender",sender);
+        hashMap.put("receiver",receiver);
+        hashMap.put("message",message);
+
+        databaseRef.child(MyFireBase.KEYS.USERS_CHATS).push().setValue(hashMap);
     }
 
     private void deletePreviousLocations() {
@@ -317,6 +316,20 @@ public class Activity_Messages extends AppCompatActivity {
         return false;
     }
 
+    private void getChatSPInfo() {
+        chatsKeysMap = MySP.getInstance().getMap(MySP.KEYS.KEYS_MAP,new TypeToken<HashMap<String, ChatMessage>>() {});
+        if (chatsKeysMap == null)
+            chatsKeysMap = new HashMap<>();
+        chatsList = MySP.getInstance().getArray(MySP.KEYS.MESSAGE_LIST,new TypeToken<ArrayList<ChatMessage>>() {});
+        if (chatsList == null)
+            chatsList = new ArrayList<>();
+    }
+
+    private void saveChatInfoToSP() {
+        MySP.getInstance().putMap(MySP.KEYS.KEYS_MAP, chatsKeysMap);
+        MySP.getInstance().putArray(MySP.KEYS.MESSAGE_LIST, chatsList);
+    }
+
     private void findViews() {
         messages_IMG_userPic = findViewById(R.id.messages_IMG_userPic);
         messages_LBL_userName = findViewById(R.id.messages_LBL_userName);
@@ -326,6 +339,4 @@ public class Activity_Messages extends AppCompatActivity {
         messages_BTN_mapButton = findViewById(R.id.messages_BTN_mapButton);
         messages_BTN_inviteButton = findViewById(R.id.messages_BTN_inviteButton);
     }
-
-
 }

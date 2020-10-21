@@ -17,6 +17,8 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="102dp"
         android:text="@string/register_app"
+        android:textStyle="italic"
+        android:textColor="@color/blackColor"
         android:textSize="25sp" />
 
     <ImageView

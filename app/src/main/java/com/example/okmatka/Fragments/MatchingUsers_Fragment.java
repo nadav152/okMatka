@@ -55,27 +55,30 @@ public class MatchingUsers_Fragment extends Fragment {
     }
 
     private void readUsers() {
+        /*
+        when ever there is a new user or
+        some user update his settings display the new list
+         */
         myMatchesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 matchingUsersList.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     User user = snap.getValue(User.class);
-
                     assert user != null;
-                    if (!user.getId().equals(firebaseUser.getUid()))
-                        matchingUsersList.add(user);
-
+                    addUserToList(user);
                 }
                 userAdapter = new UserAdapter(getContext(), matchingUsersList);
                 matchingUsers_RCV_recyclerView.setAdapter(userAdapter);
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
+    }
+
+    private void addUserToList(User user) {
+        if (!user.getId().equals(firebaseUser.getUid()))
+            matchingUsersList.add(user);
     }
 
     private void setRecyclerView(View view) {

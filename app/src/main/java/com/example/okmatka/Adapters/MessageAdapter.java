@@ -34,10 +34,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if(viewType == RIGHT_MSG) {
+            //i wrote the message
             view = LayoutInflater.from(context)
                     .inflate(R.layout.chat_right_item, parent, false);
 
         }else {
+            // user wrote the message
             view = LayoutInflater.from(context)
                     .inflate(R.layout.chat_left_item, parent, false);
         }

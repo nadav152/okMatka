@@ -21,10 +21,10 @@
     <string name="register">Register</string>"
     <string name="password">Password</string>
     <string name="re_type_password">Re-type Password</string>
-    <string name="register_app">register app</string>
+    <string name="register_app">Registration</string>
     <string name="this_will_be_the_app_logo">this will be the app logo</string>
 
-    <string name="login_app">Login App</string>
+    <string name="login_app">App Login</string>
     <string name="did_you_sign_up">Did you sign up?</string>
     <string name="good_match">Good Match</string>
     <string name="bad_match">Bad Match</string>

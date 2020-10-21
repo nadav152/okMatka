@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,19 +92,16 @@ public class Map_Fragment extends Fragment {
                     UserLocation location = snapshot.child(userISpeakWithId).getValue(UserLocation.class);
                     assert location != null;
                     currentUserPos = new LatLng(location.getLatitude(), location.getLongitude());
-                    setMarkerOnLocation();
+                    setMarkerOnCurrentPos();
                 }
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 
     //this method sets the map new marker location
-    public void setMarkerOnLocation() {
+    public void setMarkerOnCurrentPos() {
         mapView.getMapAsync(mapReadyCallback);
     }
 
@@ -117,13 +113,6 @@ public class Map_Fragment extends Fragment {
             if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             googleMap.setMyLocationEnabled(true);
@@ -177,10 +166,13 @@ public class Map_Fragment extends Fragment {
                 }
             });
         } else
-            MySignal.getInstance().showToast("This game location was not captured");
+            MySignal.getInstance().showToast("This location was not captured");
     }
 
     private boolean isLocationChange(double myLat, double lat, double myLon, double lon) {
+        /* making the location less sensitive
+        if case the user stay in the same spot for long time
+         */
         myLat = Math.floor(myLat * 100000) / 100000;
         lat = Math.floor(lat * 100000) / 100000;
         myLon = Math.floor(myLon * 100000) / 100000;
@@ -225,7 +217,6 @@ public class Map_Fragment extends Fragment {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         usersLocationRef = MyFireBase.getInstance().
                 getReference(MyFireBase.KEYS.USERS_LOCATIONS).child(matchRef);
-        Log.d("ppp"," i created Room in map fragment = " + iCreatedTheRoom);
         if (iCreatedTheRoom)
             usersLocationRef.child(MyFireBase.KEYS.ROOM_CREATOR).setValue(firebaseUser.getUid());
     }

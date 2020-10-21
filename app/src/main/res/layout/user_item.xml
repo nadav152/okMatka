@@ -18,15 +18,6 @@
         app:layout_constraintTop_toBottomOf="@+id/userItem_LBL_name" />
 
     <TextView
-        android:id="@+id/userItem_LBL_online"
-        android:layout_width="8dp"
-        android:layout_height="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/userItem_IMG_userPic"
-        android:background="@color/fui_transparent"
-        />
-
-    <TextView
         android:id="@+id/userItem_LBL_name"
         android:layout_width="85dp"
         android:layout_height="21dp"

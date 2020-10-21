@@ -42,18 +42,8 @@ public class MySP {
 
 
     public interface KEYS {
-        public final static String NAME = "NAME";
-        public final static String lAST_NAME = "LAST_NAME";
-        public final static String FAVOURITE_BEACH = "FAVOURITE_BEACH";
-        public final static String EMAIL = "EMAIL";
-        public final static String AGE = "AGE";
-        public final static String ROLL = "ROLL";
-        public final static String EXPERIENCE = "EXPERIENCE";
-
-        public final static String USER_LIST = "USER_LIST";
-        public final static String CURRENT_USER = "CURRENT_USER";
-
-
+        public final static String MESSAGE_LIST = "MESSAGE_LIST";
+        public final static String KEYS_MAP = "KEYS_MAP";
     }
 
 

@@ -2,7 +2,6 @@ package com.example.okmatka.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
@@ -60,7 +58,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         final User currentUser = userList.get(position);
         loadUserFromMatchList(holder, currentUser);
-
 
         //setting holder listeners
         holder.userItem_BTN_chat.setOnClickListener(userItemListener(holder, currentUser));
@@ -95,7 +92,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
     };
 
-
     private void setUserRate(String userRate, User user) {
         if ((!userRate.equals("")) && checkRate(userRate)) {
             int reviewsNumber = user.getNumberOfReviews() + 1;
@@ -115,7 +111,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return new OnCompleteListener<Void>() {
     @Override
     public void onComplete(@NonNull Task<Void> task) {
-        ////updating the new number of reviews
+        //updating the new number of reviews
             usersRef.child(user.getId())
                 .child(MyFireBase.KEYS.NUMBER_OF_REVIEWS)
                 .setValue(reviews).addOnCompleteListener(reviewsUpdateCompleterListener(user));
@@ -146,11 +142,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     updateMatches(myMatchUser,updatedUser);
                 }
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
     }
 
@@ -160,17 +153,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         myMatchRef.child(MyFireBase.KEYS.USER_MATCHES_LIST).child(mySelf.getId()).setValue(mySelf);
     }
 
-
     private boolean checkRate(String rateResult) {
         if(android.text.TextUtils.isDigitsOnly(rateResult)){
-            double numericResult = Double.parseDouble(rateResult);
-            if (numericResult <= 10 && numericResult >= 0)
-                return true;
-            else
-                MySignal.getInstance().showToast("Rate must be 0-10");
-            return false;
+            return isRateInRange(rateResult);
         }
         MySignal.getInstance().showToast("Rate must be a number");
+        return false;
+    }
+
+    private boolean isRateInRange(String rateResult) {
+        double numericResult = Double.parseDouble(rateResult);
+        if (numericResult <= 10 && numericResult >= 0)
+            return true;
+        else
+            MySignal.getInstance().showToast("Rate must be 0-10");
         return false;
     }
 
@@ -194,11 +190,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 .load(currentUser.getImageURL())
                 .into(holder.userItem_IMG_userPic);
 
-        //status check
-        if (currentUser.getStatus().equals("online"))
-            holder.userItem_LBL_online.setBackgroundColor(Color.GREEN);
-        else
-            holder.userItem_LBL_online.setBackgroundColor(Color.RED);
     }
 
     @Override
@@ -209,7 +200,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView userItem_IMG_userPic;
-        private TextView userItem_LBL_name,userItem_LBL_online;
+        private TextView userItem_LBL_name;
         private MaterialButton userItem_BTN_chat , userItem_BTN_rate;
 
 
@@ -219,7 +210,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             userItem_BTN_chat = itemView.findViewById(R.id.userItem_BTN_chat);
             userItem_IMG_userPic = itemView.findViewById(R.id.userItem_IMG_userPic);
             userItem_LBL_name = itemView.findViewById(R.id.userItem_LBL_name);
-            userItem_LBL_online = itemView.findViewById(R.id.userItem_LBL_online);
         }
     }
 

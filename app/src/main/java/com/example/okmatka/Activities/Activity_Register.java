@@ -104,10 +104,7 @@ public class Activity_Register extends AppCompatActivity {
                     currentUser.setId(userId);
                     myRef.child(userId).setValue(currentUser).addOnCompleteListener(setValueCompleteListener());
                 }else {
-                    if (isNetworkConnected())
-                    MySignal.getInstance().showToast("Task was not completed\n user was not saved");
-                    else
-                        MySignal.getInstance().showToast("Make sure you have internet connection");
+                    showWhyTaskFailed();
                 }
             }
         };
@@ -123,6 +120,13 @@ public class Activity_Register extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void showWhyTaskFailed() {
+        if (isNetworkConnected())
+            MySignal.getInstance().showToast("User was not saved\ntry again");
+        else
+            MySignal.getInstance().showToast("Make sure you have internet connection");
     }
 
     private void moveToLogin() {

@@ -35,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Activity_Main extends AppCompatActivity {
 
@@ -65,6 +64,7 @@ public class Activity_Main extends AppCompatActivity {
         setClickersListeners();
         setFireBase();
         setTabs();
+        checkUserInfo();
     }
 
     @Override
@@ -76,13 +76,11 @@ public class Activity_Main extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkStatus("online");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        checkStatus("offline");
     }
 
     private void setTabs() {
@@ -218,10 +216,26 @@ public class Activity_Main extends AppCompatActivity {
             finish();
     }
 
-    private void checkStatus(String status){
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("status",status);
-        myUserRef.updateChildren(hashMap);
+    private void checkUserInfo() {
+        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User mySelf = snapshot.getValue(User.class);
+                assert mySelf != null;
+                if (!checkAllInfoFields(mySelf))
+                    MySignal.getInstance().showToast("For better experience\nupdate your settings");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        });
+    }
+
+    private boolean checkAllInfoFields(User mySelf) {
+        return !mySelf.getRoll().equals("NaN") &&
+                !mySelf.getFavouriteBeach().equals("NaN") &&
+                mySelf.getAge() != 0 &&
+                !mySelf.getExperience().equals("NaN") &&
+                !mySelf.getImageURL().equals("default");
     }
 
     private void setAnimations() {
