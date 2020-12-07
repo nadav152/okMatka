@@ -1,5 +1,5 @@
 # okMatka
-okMatka is an android app to connect between paddle ball players, developed using FireBase.
+okMatka is an android app to connect between paddle ball players, developed using FireBase and Google Maps.
 
 
 <p align="center">
